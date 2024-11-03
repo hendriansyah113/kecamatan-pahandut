@@ -72,9 +72,11 @@ label {
     border: 1px solid #b32929;
 }
 
+/* Tampilan umum untuk konten agar selalu di tengah */
 .content {
-    /* Styling untuk konten lainnya di atas gambar */
-    /* Pastikan konten memiliki z-index yang lebih tinggi dari gambar */
+    display: flex;
+    align-items: center;
+    height: 100vh;
     position: relative;
     z-index: 1;
     color: white;
@@ -83,4 +85,33 @@ label {
 .icon-login {
     font-size: 50px; /* Sesuaikan ukuran sesuai kebutuhan */
     color: white; /* Warna ikon */
+}
+
+/* CSS untuk tampilan responsif di layar kecil */
+@media only screen and (max-width: 1000px) {
+    .kotak_login {
+        width: 80% !important;
+        margin: 50px auto !important;
+        padding: 20px 15px !important;
+    }
+
+    .tulisan_login {
+        font-size: 100px !important;
+    }
+
+    .icon-login {
+        font-size: 100px !important;
+    }
+
+    h4 {
+        font-size: 24px;
+    }
+
+    .form_login, .tombol_login {
+        font-size: 24pt !important;
+    }
+
+    .alert {
+        font-size: 50px;
+    }
 }

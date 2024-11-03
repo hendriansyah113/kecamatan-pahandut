@@ -162,6 +162,9 @@
                                     <li class="nav-item">
                                         <a class="nav-link" href="#statistik">Statistik</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="login/index.php"> Login</a>
+                                    </li>
                                 </ul>
                             </div>
                         </nav>
@@ -326,7 +329,7 @@
                                     Layanan untuk pengajuan Surat Keterangan Tidak Mampu (SKTM) bagi keperluan
                                     pendidikan, seperti beasiswa atau bantuan sekolah.
                                 </p>
-                                <a href="">
+                                <a href="sktm_pendidikan.php">
                                     Kunjungi
                                 </a>
                             </div>
