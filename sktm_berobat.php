@@ -14,7 +14,7 @@
     <meta name="author" content="" />
     <link rel="shortcut icon" href="images/Lambang_Kota_Palangka_Raya.png" type="image/x-icon">
 
-    <title>SKTM PENDIDIKAN</title>
+    <title>SKTM BEROBAT</title>
 
     <!-- bootstrap core css -->
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
@@ -125,7 +125,7 @@
     <section class="client_section layout_padding">
       <div class="container">
         <div class="heading_container heading_center">
-          <h2>SKTM Pendidikan</h2>
+          <h2>SKTM Berobat</h2>
         </div>
         <form action="" method="POST" enctype="multipart/form-data" class="form-container">
 
