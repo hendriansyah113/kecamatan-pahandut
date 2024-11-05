@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Kecamatan Pahandut</title>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style type="text/css">
         body {
-            background-color: #f4f4f4;
+            background-color: #eef2f7;
             margin: 0;
             font-family: 'Times New Roman', Times, serif;
         }
@@ -20,6 +21,9 @@
             align-items: center;
             padding: 0 20px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            top: 0;
+            z-index: 1000;
         }
 
         .logo {
@@ -48,7 +52,8 @@
         }
 
         .menu a:hover {
-            color: #ff6347; /* Tomato color */
+            color: #ff6347;
+            /* Tomato color */
         }
 
         .menu a:before {
@@ -116,38 +121,108 @@
             border: 1px solid indianred;
         }
 
-        h2{
-          font-family: times new roman;
-          text-align: center;
+        .container {
+            max-width: 1200px;
+            margin: 100px auto 50px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
         }
-        table {
-            width: 80%;
+
+        .table {
+            width: 100%;
             border-collapse: collapse;
-            margin: 20px auto;
         }
-        th, td {
-            border: 1px solid #dddddd;
+
+        .table th,
+        .table td {
+            padding: 15px;
             text-align: left;
-            padding: 8px;
+            border-bottom: 1px solid #ddd;
         }
-        th {
-            background-color: #f2f2f2;
+
+        .table th {
+            background: black;
         }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
+
+        .table tr:hover {
+            background: #d3d3d3;
         }
-        tr:hover {
-            background-color: #f1f1f1;
+
+        .table-responsive {
+            overflow-x: auto;
         }
-  </style>
+
+        .table thead tr {
+            background: linear-gradient(135deg, #2b5876, #4e4376);
+            color: white;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-add {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #28a745;
+            /* Green color */
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .btn-add:hover {
+            background-color: #218838;
+            /* Darker green */
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-add:focus {
+            outline: none;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .pagination a {
+            color: #333;
+            padding: 10px 20px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            margin: 0 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .pagination a.active {
+            background-color: #28a745;
+            color: white;
+            border: 1px solid #28a745;
+        }
+
+        .pagination a:hover {
+            background-color: #ddd;
+        }
+    </style>
 </head>
+
 <body>
-  <nav>
+    <nav>
         <div class="logo">
             <img src="logo.gif" alt="Logo" class="logo-img">
         </div>
         <div class="menu-toggle" onclick="toggleMenu()">
-            <img src="https://img.icons8.com/android/24/ffffff/menu.png"/>
+            <img src="https://img.icons8.com/android/24/ffffff/menu.png" />
         </div>
         <ul class="menu">
             <li><a href="halaman_admin.php">Beranda</a></li>
@@ -160,51 +235,126 @@
             <li><a class="logout" href="logout.php"><i class="fas fa-sign-out-alt"></i></a></li>
         </ul>
     </nav>
-  <br>
-  <h2>Data User</h2>
-  <br>
-  <table border="1">
-    <tr>
-        <th>NO</th>
-        <th>Nama</th>
-        <th>Username</th>
-        <th>Password</th>
-        <th>Role</th>
-    </tr>
 
-  <?php
-  $servername = "localhost"; // Ganti dengan nama server database Anda
-  $username = "root"; // Ganti dengan username database Anda
-  $password = ""; // Ganti dengan password database Anda
-  $dbname = "kecamatan"; // Ganti dengan nama database Anda
+    <div class="container">
+        <h2>Data User</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div>
+                <a href="data_user.php" class="btn-add">Tambah Data</a>
+                <a href="print_pdf.php" class="btn-add">Cetak PDF</a>
+            </div>
+            <div>
+                <input type="text" id="searchInput" placeholder="Cari..." style="padding: 10px; font-size: 16px;">
+                <button onclick="searchData()"
+                    style="padding: 10px; background: #28a745; color: white; border: none; cursor: pointer;"><i
+                        class="fas fa-search"></i></button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Username</th>
+                        <th>Level</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Menghubungkan ke database
+                    $servername = "localhost";
+                    $username = "root";
+                    $password = "";
+                    $dbname = "kecamatan";
 
-  // Buat koneksi
-  $conn = new mysqli($servername, $username, $password, $dbname);
+                    // Membuat koneksi
+                    $conn = new mysqli($servername, $username, $password, $dbname);
 
-  // Periksa koneksi
-  if ($conn->connect_error) {
-      die("Koneksi gagal: " . $conn->connect_error);
-  }
+                    // Memeriksa koneksi
+                    if ($conn->connect_error) {
+                        die("Koneksi gagal: " . $conn->connect_error);
+                    }
 
-  $sql = "SELECT id, nama, username, MD5(password) AS password, level FROM login";
-      $result = $conn->query($sql);
+                    // Mendapatkan halaman saat ini dan batas data per halaman
+                    $limit = 10; // Batas data per halaman
+                    $page = isset($_GET['page']) ? $_GET['page'] : 1;
+                    $offset = ($page - 1) * $limit;
 
-      if ($result->num_rows > 0) {
-        // Menampilkan setiap baris data
-        while($row = $result->fetch_assoc()) {
-            echo "<tr><td>" . $row["id"]. "</td><td>" . $row["nama"]. "</td><td>" . $row["username"]. "</td><td>" . $row["password"]. "</td><td>" . $row["level"]. "</td></tr>";
+                    // Mengambil nilai pencarian jika ada
+                    $search = isset($_GET['search']) ? $_GET['search'] : '';
+
+                    // Mengambil total jumlah data
+                    $sql_count = "SELECT COUNT(*) AS total FROM login";
+                    if ($search) {
+                        $sql_count .= " WHERE no_KK LIKE '%$search%' OR tanggal LIKE '%$search%' OR nama_ttl LIKE '%$search%' OR alamat LIKE '%$search%' OR ket LIKE '%$search%'";
+                    }
+                    $result_count = $conn->query($sql_count);
+                    $total_data = $result_count->fetch_assoc()['total'];
+                    $total_pages = ceil($total_data / $limit);
+
+                    // Mengambil data dari database
+                    $sql = "SELECT * FROM login";
+                    if ($search) {
+                        $sql .= " WHERE nama LIKE '%$search%' OR username LIKE '%$search%' OR level LIKE '%$search%'";
+                    }
+                    $sql .= " LIMIT $limit OFFSET $offset";
+                    $result = $conn->query($sql);
+
+                    if ($result->num_rows > 0) {
+                        // Output data setiap baris
+                        $no = $offset + 1;
+                        while ($row = $result->fetch_assoc()) {
+                            echo '<tr>
+                                    <td>' . $no . '</td>
+                                    <td>' . $row["nama"] . '</td>
+                                    <td>' . $row["username"] . '</td>
+                                    <td>' . $row["level"] . '</td>
+                                    <td>
+                                       <a href="edit_user.php?id=' . $row["id"] . '" class="btn-add">Edit</a>
+                                       <a href="hapus_user.php?id=' . $row["id"] . '" class="btn-add" onclick="return confirm(\'Apakah Anda yakin ingin menghapus data ini?\')">Hapus</a>
+                                    </td>
+                                  </tr>';
+                            $no++;
+                        }
+                    } else {
+                        echo "<tr><td colspan='6'>Tidak ada data</td></tr>";
+                    }
+
+                    $conn->close();
+                    ?>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <?php if ($page > 1): ?>
+                <a href="?page=<?php echo $page - 1; ?>&search=<?php echo $search; ?>">Previous</a>
+            <?php endif; ?>
+
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <a href="?page=<?php echo $i; ?>&search=<?php echo $search; ?>"
+                    class="<?php echo $page == $i ? 'active' : ''; ?>"><?php echo $i; ?></a>
+            <?php endfor; ?>
+
+            <?php if ($page < $total_pages): ?>
+                <a href="?page=<?php echo $page + 1; ?>&search=<?php echo $search; ?>">Next</a>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.querySelector('.menu');
+            menu.classList.toggle('open');
         }
-      } else {
-        echo "0 results";
-      }
-  $conn->close();
-  ?>
-  </table>
-<script>
-    function toggleMenu() {
-        const menu = document.querySelector('.menu');
-        menu.classList.toggle('open');
-    }
-</script>
+
+        function searchData() {
+            const searchInput = document.getElementById('searchInput').value;
+            window.location.href = '?search=' + searchInput;
+        }
+    </script>
 </body>
+
 </html>
