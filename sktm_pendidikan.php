@@ -86,7 +86,7 @@
       // Cek apakah file formulir diunggah
       if (isset($_FILES['formulir']) && $_FILES['formulir']['error'] == 0) {
         $targetDir = "login/admin/uploads/sktm/";  // Direktori penyimpanan file
-        $fileName = basename($_FILES['formulir']['name']);
+        $fileName = uniqid() . "_" . basename($_FILES['formulir']['name']); // Menambahkan kode unik
         $targetFilePath = $targetDir . $fileName;
 
         // Pindahkan file ke server

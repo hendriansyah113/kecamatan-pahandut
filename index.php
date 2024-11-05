@@ -368,7 +368,7 @@
                                     Layanan pendaftaran BPJS Kesehatan bagi warga yang membutuhkan jaminan kesehatan
                                     dengan proses yang lebih mudah.
                                 </p>
-                                <a href="">
+                                <a href="permohonan_bpjs.php">
                                     Kunjungi
                                 </a>
                             </div>

@@ -85,8 +85,8 @@
 
       // Cek apakah file formulir diunggah
       if (isset($_FILES['formulir']) && $_FILES['formulir']['error'] == 0) {
-        $targetDir = "login/admin/uploads/sktm/";  // Direktori penyimpanan file
-        $fileName = basename($_FILES['formulir']['name']);
+        $targetDir = "login/admin/uploads/berobat/";  // Direktori penyimpanan file
+        $fileName = uniqid() . "_" . basename($_FILES['formulir']['name']); // Menambahkan kode unik
         $targetFilePath = $targetDir . $fileName;
 
         // Pindahkan file ke server
@@ -104,7 +104,7 @@
       }
 
       // Menyimpan data ke database
-      $sql = "INSERT INTO sktm_pend (no_kk, tanggal, nama_ttl, alamat, ket, formulir)
+      $sql = "INSERT INTO sktm_berobat (no_kk, tanggal, nama_ttl, alamat, ket, formulir)
           VALUES ('$no_kk', '$tanggal', '$nama_ttl', '$alamat', '$keterangan', ?)";
 
       $stmt = $conn->prepare($sql);
