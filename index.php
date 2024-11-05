@@ -30,94 +30,94 @@
         <!-- responsive style -->
         <link href="css/responsive.css" rel="stylesheet" />
         <style>
-            .service_section .box {
-                display: flex;
-                /* Menggunakan Flexbox untuk tata letak */
-                flex-direction: column;
-                /* Mengatur arah kolom */
-                height: 90%;
-                /* Mengatur tinggi card menjadi 100% dari kontainer */
-                min-height: 300px;
-                /* Tinggi minimum untuk card */
-                padding: 20px;
-                /* Tambahkan padding di dalam card */
-                border: 1px solid #ddd;
-                /* Batas untuk memperjelas */
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                /* Tambahkan bayangan (opsional) */
-                border-radius: 8px;
-                /* Sudut melingkar (opsional) */
-                margin-bottom: 20px;
-                /* Jarak antar card */
-            }
+        .service_section .box {
+            display: flex;
+            /* Menggunakan Flexbox untuk tata letak */
+            flex-direction: column;
+            /* Mengatur arah kolom */
+            height: 90%;
+            /* Mengatur tinggi card menjadi 100% dari kontainer */
+            min-height: 300px;
+            /* Tinggi minimum untuk card */
+            padding: 20px;
+            /* Tambahkan padding di dalam card */
+            border: 1px solid #ddd;
+            /* Batas untuk memperjelas */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            /* Tambahkan bayangan (opsional) */
+            border-radius: 8px;
+            /* Sudut melingkar (opsional) */
+            margin-bottom: 20px;
+            /* Jarak antar card */
+        }
 
-            .service_section .detail-box {
-                flex-grow: 1;
-                /* Memungkinkan konten untuk tumbuh dan mengisi ruang */
-                display: flex;
-                /* Menggunakan Flexbox untuk tata letak dalam detail box */
-                flex-direction: column;
-                /* Mengatur arah kolom untuk detail box */
-                justify-content: space-between;
-                /* Menjaga jarak antara elemen atas dan bawah */
-            }
+        .service_section .detail-box {
+            flex-grow: 1;
+            /* Memungkinkan konten untuk tumbuh dan mengisi ruang */
+            display: flex;
+            /* Menggunakan Flexbox untuk tata letak dalam detail box */
+            flex-direction: column;
+            /* Mengatur arah kolom untuk detail box */
+            justify-content: space-between;
+            /* Menjaga jarak antara elemen atas dan bawah */
+        }
 
-            .service_section .box a {
-                margin-top: auto;
-                /* Memindahkan tombol ke bawah */
-            }
+        .service_section .box a {
+            margin-top: auto;
+            /* Memindahkan tombol ke bawah */
+        }
 
-            .chart-container {
-                padding: 5px;
-                background-color: #f8f9fa;
-                border-radius: 8px;
-                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            }
+        .chart-container {
+            padding: 5px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
 
-            .chart-wrapper {
-                margin-bottom: 20px;
-            }
+        .chart-wrapper {
+            margin-bottom: 20px;
+        }
 
-            .chart-wrapper h2 {
-                text-align: center;
-                margin-bottom: 15px;
-            }
+        .chart-wrapper h2 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
 
+        .chart-wrapper canvas {
+            width: 100% !important;
+            /* Tinggi default */
+            height: 400px !important;
+        }
+
+        /* Tinggi khusus untuk layar besar */
+        @media (min-width: 768px) {
             .chart-wrapper canvas {
-                width: 100% !important;
-                /* Tinggi default */
-                height: 400px !important;
+                height: 500px !important;
             }
+        }
 
-            /* Tinggi khusus untuk layar besar */
-            @media (min-width: 768px) {
-                .chart-wrapper canvas {
-                    height: 500px !important;
-                }
-            }
+        .chart-box {
+            flex: 1;
+            min-width: 300px;
+            /* Set minimum width for responsive design */
+            max-width: 400px;
+            /* Set maximum width for each chart box */
+            margin: 10px;
+        }
 
-            .chart-box {
-                flex: 1;
-                min-width: 300px;
-                /* Set minimum width for responsive design */
-                max-width: 400px;
-                /* Set maximum width for each chart box */
-                margin: 10px;
-            }
+        .statistics_section .card {
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-            .statistics_section .card {
-                margin: 20px 0;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            }
+        .statistics_section canvas {
+            margin-top: 20px;
+        }
 
-            .statistics_section canvas {
-                margin-top: 20px;
-            }
-
-            html {
-                scroll-behavior: smooth;
-                /* Ini membuat transisi menjadi halus saat menggulir */
-            }
+        html {
+            scroll-behavior: smooth;
+            /* Ini membuat transisi menjadi halus saat menggulir */
+        }
         </style>
     </head>
 
@@ -389,7 +389,7 @@
                                     Layanan pengajuan Surat Keterangan Catatan Kepolisian (SKCK) untuk keperluan
                                     administrasi, pekerjaan, atau lainnya.
                                 </p>
-                                <a href="">
+                                <a href="permohonan_skck.php">
                                     Kunjungi
                                 </a>
                             </div>
@@ -670,106 +670,106 @@
         </footer>
         <!-- footer section -->
         <script>
-            // Diagram Batang Jumlah Penduduk Per Kelurahan
-            const ctx1 = document.getElementById('populationChart').getContext('2d');
-            const populationChart = new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: ['Pahandut', 'Panarung', 'Langkai', 'Tumbang Rungan', 'Tanjung Pinang',
-                        'Pahandut Seberang'
-                    ],
-                    datasets: [{
-                            label: 'Laki-laki',
-                            data: [14112, 15350, 14926, 435, 2579, 2745],
-                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        // Diagram Batang Jumlah Penduduk Per Kelurahan
+        const ctx1 = document.getElementById('populationChart').getContext('2d');
+        const populationChart = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['Pahandut', 'Panarung', 'Langkai', 'Tumbang Rungan', 'Tanjung Pinang',
+                    'Pahandut Seberang'
+                ],
+                datasets: [{
+                        label: 'Laki-laki',
+                        data: [14112, 15350, 14926, 435, 2579, 2745],
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    },
+                    {
+                        label: 'Perempuan',
+                        data: [13362, 15053, 14722, 411, 2484, 2662],
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Diagram Jumlah Penduduk Per Kelurahan'
+                    },
+                    datalabels: {
+                        color: 'black',
+                        anchor: 'end',
+                        align: 'top',
+                        font: {
+                            weight: 'bold'
                         },
-                        {
-                            label: 'Perempuan',
-                            data: [13362, 15053, 14722, 411, 2484, 2662],
-                            backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                        }
-                    ]
+                        formatter: (value) => value,
+                    }
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top'
-                        },
+                scales: {
+                    y: {
+                        beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Diagram Jumlah Penduduk Per Kelurahan'
-                        },
-                        datalabels: {
-                            color: 'black',
-                            anchor: 'end',
-                            align: 'top',
-                            font: {
-                                weight: 'bold'
-                            },
-                            formatter: (value) => value,
+                            text: 'Jumlah Penduduk'
                         }
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Jumlah Penduduk'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Kelurahan'
-                            }
-                        }
-                    }
-                },
-                plugins: [ChartDataLabels]
-            });
-
-
-            // Diagram Pie Distribusi Usia Penduduk
-            const ctx2 = document.getElementById('ageDistributionChart').getContext('2d');
-            const ageDistributionChart = new Chart(ctx2, {
-                type: 'pie',
-                data: {
-                    labels: ['Anak-anak (0-14)', 'Dewasa (15-64)', 'Lansia (65+)'],
-                    datasets: [{
-                        data: [27360, 69169, 3695],
-                        backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)',
-                            'rgba(255, 159, 64, 0.6)'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top'
-                        },
+                    x: {
                         title: {
                             display: true,
-                            text: 'Distribusi Usia Penduduk'
-                        },
-                        datalabels: {
-                            color: 'white',
-                            font: {
-                                weight: 'bold'
-                            },
-                            formatter: (value, context) => {
-                                const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
-                                const percentage = ((value / total) * 100).toFixed(1) + '%';
-                                return percentage;
-                            }
+                            text: 'Kelurahan'
                         }
                     }
-                },
-                plugins: [ChartDataLabels]
-            });
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+
+        // Diagram Pie Distribusi Usia Penduduk
+        const ctx2 = document.getElementById('ageDistributionChart').getContext('2d');
+        const ageDistributionChart = new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: ['Anak-anak (0-14)', 'Dewasa (15-64)', 'Lansia (65+)'],
+                datasets: [{
+                    data: [27360, 69169, 3695],
+                    backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 159, 64, 0.6)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Distribusi Usia Penduduk'
+                    },
+                    datalabels: {
+                        color: 'white',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: (value, context) => {
+                            const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                            const percentage = ((value / total) * 100).toFixed(1) + '%';
+                            return percentage;
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
         </script>
         <script src="js/jquery-3.4.1.min.js"></script>
         <script src="js/bootstrap.js"></script>
