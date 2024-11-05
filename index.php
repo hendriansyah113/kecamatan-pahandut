@@ -409,7 +409,7 @@
                                     Layanan pengajuan berbagai surat keterangan umum yang dibutuhkan oleh warga
                                     Kecamatan Pahandut untuk berbagai keperluan.
                                 </p>
-                                <a href="">
+                                <a href="permohonan_umum.php">
                                     Kunjungi
                                 </a>
                             </div>
