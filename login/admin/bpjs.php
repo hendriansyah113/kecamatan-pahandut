@@ -273,6 +273,7 @@ if (!isset($_SESSION['username'])) {
                         <th>Alamat</th>
                         <th>Telpon</th>
                         <th>Status</th>
+                        <th>Verifikasi</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -310,12 +311,44 @@ if (!isset($_SESSION['username'])) {
                     $total_pages = ceil($total_data / $limit);
 
                     // Mengambil data dari database
-                    $sql = "SELECT id, nik, tanggal, nama, alamat, telpon, status FROM arsip_bpjs";
+                    $sql = "SELECT * FROM arsip_bpjs";
                     if ($search) {
                         $sql .= " WHERE nik LIKE '%$search%' OR tanggal LIKE '%$search%' OR nama LIKE '%$search%' OR alamat LIKE '%$search%' OR telpon LIKE '%$search%' OR status LIKE '%$search%'";
                     }
                     $sql .= " LIMIT $limit OFFSET $offset";
                     $result = $conn->query($sql);
+
+                    // Memproses verifikasi jika tombol 'Verifikasi' diklik
+                    if (isset($_GET['verifikasi_id'])) {
+                        $verifikasi_id = $conn->real_escape_string($_GET['verifikasi_id']);
+                        $sql_verifikasi = "UPDATE arsip_bpjs SET verifikasi = 'Terverifikasi' WHERE id = $verifikasi_id";
+
+                        if ($conn->query($sql_verifikasi) === TRUE) {
+                            echo "<script>alert('Data berhasil diverifikasi.');</script>";
+                            // Refresh halaman setelah verifikasi
+                            echo "<script>window.location.href = 'bpjs.php';</script>";
+                        } else {
+                            echo "<script>alert('Gagal memverifikasi data.');</script>";
+                            // Refresh halaman jika gagal
+                            echo "<script>window.location.href = 'bpjs.php';</script>";
+                        }
+                    }
+
+                    if (isset($_GET['cancel_verifikasi_id'])) {
+                        $cancel_id = $_GET['cancel_verifikasi_id'];
+                        $sql_cancel_verifikasi = "UPDATE arsip_bpjs SET verifikasi = '' WHERE id = $cancel_id";
+                        if ($conn->query($sql_cancel_verifikasi) === TRUE) {
+                            echo "<script>
+                                    alert('Verifikasi dibatalkan.');
+                                    window.location.href = 'bpjs.php';
+                                  </script>";
+                        } else {
+                            echo "<script>
+                                    alert('Gagal membatalkan verifikasi.');
+                                    window.location.href = 'bpjs.php';
+                                  </script>";
+                        }
+                    }
 
                     if ($result->num_rows > 0) {
                         // Output data setiap baris
@@ -329,7 +362,16 @@ if (!isset($_SESSION['username'])) {
                                     <td>" . $row["alamat"] . "</td>
                                     <td>" . $row["telpon"] . "</td>
                                     <td>" . $row["status"] . "</td>
-                                    <td><a href='edit_bpjs.php?id=" . $row["id"] . "' class='btn-add'>Edit</a></td>
+                                     <td>" . (($row["verifikasi"] === null || $row["verifikasi"] === '') ? 'Belum Terverifikasi' : $row["verifikasi"]) . "</td>
+                                    <td><a href='edit_bpjs.php?id=" . $row["id"] . "' class='btn-add'>Edit</a>";
+                            // Cek status verifikasi untuk menampilkan tombol 'Verifikasi' atau status 'Terverifikasi'
+                            if ($row['verifikasi'] == 'Terverifikasi') {
+                                echo "<a href='?cancel_verifikasi_id=" . $row["id"] . "' class='btn-add' style='margin-left: 5px;'>Cancel</a>";
+                            } else {
+                                echo "<a href='?verifikasi_id=" . $row["id"] . "' class='btn-add' style='margin-left: 5px;'>Verifikasi</a>";
+                            }
+
+                            echo "</td>
                                   </tr>";
                             $no++;
                         }
