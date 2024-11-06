@@ -1,3 +1,11 @@
+<?php
+// Cek apakah pengguna sudah login dan apakah levelnya adalah admin
+if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'admin') {
+    // Jika bukan admin, arahkan ke halaman beranda
+    header("Location: halaman_admin.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -243,7 +251,7 @@
             $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
             // Mengupdate data di database
-            $sql = "UPDATE login SET nama='$nama', username='$username', level='$level', password='$hashedPassword'";
+            $sql = "UPDATE login SET nama='$nama', username='$username', level='$level', password='$hashedPassword' WHERE id=$id";
 
             if ($conn->query($sql) === TRUE) {
                 echo "<script>

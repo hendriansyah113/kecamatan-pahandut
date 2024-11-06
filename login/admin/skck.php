@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Kecamatan Pahandut</title>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -51,7 +52,8 @@
         }
 
         .menu a:hover {
-            color: #ff6347; /* Tomato color */
+            color: #ff6347;
+            /* Tomato color */
         }
 
         .menu a:before {
@@ -133,7 +135,8 @@
             border-collapse: collapse;
         }
 
-        .table th, .table td {
+        .table th,
+        .table td {
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid #ddd;
@@ -166,7 +169,8 @@
             padding: 10px 20px;
             font-size: 16px;
             color: white;
-            background-color: #28a745; /* Green color */
+            background-color: #28a745;
+            /* Green color */
             border: none;
             border-radius: 5px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -176,7 +180,8 @@
         }
 
         .btn-add:hover {
-            background-color: #218838; /* Darker green */
+            background-color: #218838;
+            /* Darker green */
             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
         }
 
@@ -210,13 +215,14 @@
         }
     </style>
 </head>
+
 <body>
     <nav>
         <div class="logo">
             <img src="logo.gif" alt="Logo" class="logo-img">
         </div>
         <div class="menu-toggle" onclick="toggleMenu()">
-            <img src="https://img.icons8.com/android/24/ffffff/menu.png"/>
+            <img src="https://img.icons8.com/android/24/ffffff/menu.png" />
         </div>
         <ul class="menu">
             <li><a href="halaman_admin.php">Beranda</a></li>
@@ -225,7 +231,9 @@
             <li><a href="bpjs.php">Arsip BPJS</a></li>
             <li><a href="skck.php">Arsip SKCK</a></li>
             <li><a href="umum.php">Arsip Umum</a></li>
-            <li><a href="d_user.php">User</a></li>
+            <?php if (isset($_SESSION['level']) && $_SESSION['level'] === 'admin') : ?>
+                <li><a href="d_user.php">User</a></li>
+            <?php endif; ?>
             <li><a class="logout" href="logout.php"><i class="fas fa-sign-out-alt"></i></a></li>
         </ul>
     </nav>
@@ -239,7 +247,9 @@
             </div>
             <div>
                 <input type="text" id="searchInput" placeholder="Cari..." style="padding: 10px; font-size: 16px;">
-                <button onclick="searchData()" style="padding: 10px; background: #28a745; color: white; border: none; cursor: pointer;"><i class="fas fa-search"></i></button>
+                <button onclick="searchData()"
+                    style="padding: 10px; background: #28a745; color: white; border: none; cursor: pointer;"><i
+                        class="fas fa-search"></i></button>
             </div>
         </div>
         <div class="table-responsive">
@@ -300,15 +310,15 @@
                     if ($result->num_rows > 0) {
                         // Output data setiap baris
                         $no = $offset + 1;
-                        while($row = $result->fetch_assoc()) {
+                        while ($row = $result->fetch_assoc()) {
                             echo "<tr>
-                                    <td>" . $no. "</td>
-                                    <td>" . $row["nama_ttl"]. "</td>
-                                    <td>" . $row["pendidikan"]. "</td>
-                                    <td>" . $row["agama"]. "</td>
-                                    <td>" . $row["alamat"]. "</td>
-                                    <td>" . $row["keterangan"]. "</td>
-                                    <td>" . $row["tanggal"]. "</td>
+                                    <td>" . $no . "</td>
+                                    <td>" . $row["nama_ttl"] . "</td>
+                                    <td>" . $row["pendidikan"] . "</td>
+                                    <td>" . $row["agama"] . "</td>
+                                    <td>" . $row["alamat"] . "</td>
+                                    <td>" . $row["keterangan"] . "</td>
+                                    <td>" . $row["tanggal"] . "</td>
                                     <td><a href='edit_skck.php?id=" . $row["id"] . "' class='btn-add'>Edit</a></td>
                                   </tr>";
                             $no++;
@@ -327,9 +337,10 @@
             <?php if ($page > 1): ?>
                 <a href="?page=<?php echo $page - 1; ?>&search=<?php echo $search; ?>">Previous</a>
             <?php endif; ?>
-            
+
             <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                <a href="?page=<?php echo $i; ?>&search=<?php echo $search; ?>" class="<?php echo $page == $i ? 'active' : ''; ?>"><?php echo $i; ?></a>
+                <a href="?page=<?php echo $i; ?>&search=<?php echo $search; ?>"
+                    class="<?php echo $page == $i ? 'active' : ''; ?>"><?php echo $i; ?></a>
             <?php endfor; ?>
 
             <?php if ($page < $total_pages): ?>
@@ -350,4 +361,5 @@
         }
     </script>
 </body>
+
 </html>

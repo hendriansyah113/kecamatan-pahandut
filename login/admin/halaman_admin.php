@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Kecamatan Pahandut</title>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style type="text/css">
         body {
-          background: url('latar.jpg') no-repeat center center fixed;
-          background-size: cover;
-          margin: 0;
-          font-family: 'Times New Roman', Times, serif;
-          color: #fff;
+            background: url('latar.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            font-family: 'Times New Roman', Times, serif;
+            color: #fff;
         }
 
-       .overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.7); /* Overlay hitam semi-transparan */
-          filter: blur(8px); /* Blur overlay */
-          z-index: -1;
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            /* Overlay hitam semi-transparan */
+            filter: blur(8px);
+            /* Blur overlay */
+            z-index: -1;
         }
 
         nav {
@@ -61,7 +64,8 @@
         }
 
         .menu a:hover {
-            color: #ff6347; /* Tomato color */
+            color: #ff6347;
+            /* Tomato color */
         }
 
         .menu a:before {
@@ -129,31 +133,34 @@
             border: 1px solid indianred;
         }
 
-        h1, h2, p {
+        h1,
+        h2,
+        p {
             text-align: center;
             font-weight: bold;
         }
     </style>
     <script>
-    function refreshPage() {
-        const url = new URL(window.location.href);
-        url.searchParams.delete('search');
-        window.location.href = url.toString();
-    }
+        function refreshPage() {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('search');
+            window.location.href = url.toString();
+        }
 
-    function toggleMenu() {
-        const menu = document.querySelector('.menu');
-        menu.classList.toggle('open');
-    }
+        function toggleMenu() {
+            const menu = document.querySelector('.menu');
+            menu.classList.toggle('open');
+        }
     </script>
 </head>
+
 <body>
     <div class="overlay"></div>
-    <?php 
+    <?php
     session_start();
- 
+
     // cek apakah yang mengakses halaman ini sudah login
-    if($_SESSION['level']==""){
+    if ($_SESSION['level'] == "") {
         header("location:../index.php?pesan=gagal");
     }
     ?>
@@ -162,7 +169,7 @@
             <img src="logo.gif" alt="Logo" class="logo-img">
         </div>
         <div class="menu-toggle" onclick="toggleMenu()">
-            <img src="https://img.icons8.com/android/24/ffffff/menu.png"/>
+            <img src="https://img.icons8.com/android/24/ffffff/menu.png" />
         </div>
         <ul class="menu">
             <li><a href="halaman_admin.php">Beranda</a></li>
@@ -171,17 +178,28 @@
             <li><a href="bpjs.php">Arsip BPJS</a></li>
             <li><a href="skck.php">Arsip SKCK</a></li>
             <li><a href="umum.php">Arsip Umum</a></li>
-            <li><a href="d_user.php">User</a></li>
+            <?php if (isset($_SESSION['level']) && $_SESSION['level'] === 'admin') : ?>
+                <li><a href="d_user.php">User</a></li>
+            <?php endif; ?>
             <li><a class="logout" href="logout.php"><i class="fas fa-sign-out-alt"></i></a></li>
         </ul>
     </nav>
     <br>
     <h1>Selamat Datang</h1>
-    <h2>Halo <b><?php echo $_SESSION['username']; ?></b> Anda telah login sebagai <b><?php echo $_SESSION['level']; ?></b>.</h2>
+    <h2>Halo <b><?php echo $_SESSION['username']; ?></b> Anda telah login sebagai
+        <b><?php echo $_SESSION['level']; ?></b>.
+    </h2>
     <br>
     <p>Silahkan Pilih Menu Yang Ada Di Atas.</p>
-    <p>Hak Akses Anda Sebagai Admin :</p>
-    <p>Menambah Data</p>
-    <p>Mengedit Data</p>
+    <p>Hak Akses Anda Sebagai <?php echo $_SESSION['level']; ?> :</p>
+    <p>Kelola Data SKTM Pendidikan</p>
+    <p>Kelola Data SKTM Berobat</p>
+    <p>Kelola Data Arsip BPJS</p>
+    <p>Kelola Data Arsip SKCK</p>
+    <p>Kelola Data Arsip Umum</p>
+    <?php if (isset($_SESSION['level']) && $_SESSION['level'] === 'admin') : ?>
+        <p>Kelola Data User</p>
+    <?php endif; ?>
 </body>
+
 </html>

@@ -1,3 +1,11 @@
+<?php
+// Cek apakah pengguna sudah login dan apakah levelnya adalah admin
+if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'admin') {
+    // Jika bukan admin, arahkan ke halaman beranda
+    header("Location: halaman_admin.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -221,8 +229,8 @@
             <div class="form-group">
                 <label for="password">Level</label>
                 <select name="level" id="level">
-                    <option value="admin" <?php if ($selectedLevel == 'admin') echo 'selected'; ?>>Admin</option>
-                    <option value="pegawai" <?php if ($selectedLevel == 'pegawai') echo 'selected'; ?>>Pegawai</option>
+                    <option value="admin">Admin</option>
+                    <option value="pegawai">Pegawai</option>
                 </select>
             </div>
             <button type="submit" class="btn-submit">Simpan Data</button>

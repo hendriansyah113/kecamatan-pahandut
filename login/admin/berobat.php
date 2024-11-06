@@ -1,222 +1,228 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Kecamatan Pahandut</title>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style type="text/css">
-        body {
-            background-color: #eef2f7;
-            margin: 0;
-            font-family: 'Times New Roman', Times, serif;
-        }
+    body {
+        background-color: #eef2f7;
+        margin: 0;
+        font-family: 'Times New Roman', Times, serif;
+    }
 
-        nav {
-            width: 100%;
-            background: linear-gradient(135deg, #2b5876, #4e4376);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            position: fixed;
-            top: 0;
-            z-index: 1000;
-        }
+    nav {
+        width: 100%;
+        background: linear-gradient(135deg, #2b5876, #4e4376);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        position: fixed;
+        top: 0;
+        z-index: 1000;
+    }
 
-        .logo {
-            display: flex;
-            align-items: center;
-        }
+    .logo {
+        display: flex;
+        align-items: center;
+    }
 
-        .logo-img {
-            max-width: 80px;
-            height: auto;
-            margin-right: 15px;
-        }
+    .logo-img {
+        max-width: 80px;
+        height: auto;
+        margin-right: 15px;
+    }
 
+    .menu {
+        display: flex;
+        list-style: none;
+    }
+
+    .menu a {
+        text-decoration: none;
+        color: white;
+        padding: 15px 20px;
+        font-size: 18px;
+        position: relative;
+        transition: color 0.3s;
+    }
+
+    .menu a:hover {
+        color: #ff6347;
+        /* Tomato color */
+    }
+
+    .menu a:before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: #ff6347;
+        transition: width 0.4s, left 0.4s;
+    }
+
+    .menu a:hover:before {
+        width: 100%;
+        left: 0;
+    }
+
+    .menu-toggle {
+        display: none;
+    }
+
+    @media only screen and (max-width: 768px) {
         .menu {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            position: absolute;
+            top: 60px;
+            left: 0;
+            z-index: 1;
+        }
+
+        .menu.open {
             display: flex;
-            list-style: none;
         }
 
         .menu a {
-            text-decoration: none;
-            color: white;
-            padding: 15px 20px;
-            font-size: 18px;
-            position: relative;
-            transition: color 0.3s;
-        }
-
-        .menu a:hover {
-            color: #ff6347; /* Tomato color */
-        }
-
-        .menu a:before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: #ff6347;
-            transition: width 0.4s, left 0.4s;
-        }
-
-        .menu a:hover:before {
+            padding: 10px 0;
             width: 100%;
-            left: 0;
+            text-align: center;
         }
 
         .menu-toggle {
-            display: none;
-        }
-
-        @media only screen and (max-width: 768px) {
-            .menu {
-                display: none;
-                flex-direction: column;
-                align-items: center;
-                width: 100%;
-                background: rgba(0, 0, 0, 0.8);
-                position: absolute;
-                top: 60px;
-                left: 0;
-                z-index: 1;
-            }
-
-            .menu.open {
-                display: flex;
-            }
-
-            .menu a {
-                padding: 10px 0;
-                width: 100%;
-                text-align: center;
-            }
-
-            .menu-toggle {
-                display: block;
-                cursor: pointer;
-            }
-        }
-
-        .logout {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: indianred;
-            transition: background 0.4s;
-        }
-
-        .logout:hover {
-            background: transparent;
-            border: 1px solid indianred;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 100px auto 50px;
-            padding: 20px;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table th, .table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .table th {
-            background: black;
-        }
-
-        .table tr:hover {
-            background: #d3d3d3;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        .table thead tr {
-            background: linear-gradient(135deg, #2b5876, #4e4376);
-            color: white;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .btn-add {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: #28a745; /* Green color */
-            border: none;
-            border-radius: 5px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s, box-shadow 0.3s;
+            display: block;
             cursor: pointer;
-            margin-bottom: 20px;
         }
+    }
 
-        .btn-add:hover {
-            background-color: #218838; /* Darker green */
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-        }
+    .logout {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: indianred;
+        transition: background 0.4s;
+    }
 
-        .btn-add:focus {
-            outline: none;
-        }
+    .logout:hover {
+        background: transparent;
+        border: 1px solid indianred;
+    }
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
+    .container {
+        max-width: 1200px;
+        margin: 100px auto 50px;
+        padding: 20px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
 
-        .pagination a {
-            color: #333;
-            padding: 10px 20px;
-            text-decoration: none;
-            border: 1px solid #ddd;
-            margin: 0 5px;
-            transition: background-color 0.3s, color 0.3s;
-        }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-        .pagination a.active {
-            background-color: #28a745;
-            color: white;
-            border: 1px solid #28a745;
-        }
+    .table th,
+    .table td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
 
-        .pagination a:hover {
-            background-color: #ddd;
-        }
+    .table th {
+        background: black;
+    }
+
+    .table tr:hover {
+        background: #d3d3d3;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table thead tr {
+        background: linear-gradient(135deg, #2b5876, #4e4376);
+        color: white;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .btn-add {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        color: white;
+        background-color: #28a745;
+        /* Green color */
+        border: none;
+        border-radius: 5px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+
+    .btn-add:hover {
+        background-color: #218838;
+        /* Darker green */
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-add:focus {
+        outline: none;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+    }
+
+    .pagination a {
+        color: #333;
+        padding: 10px 20px;
+        text-decoration: none;
+        border: 1px solid #ddd;
+        margin: 0 5px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .pagination a.active {
+        background-color: #28a745;
+        color: white;
+        border: 1px solid #28a745;
+    }
+
+    .pagination a:hover {
+        background-color: #ddd;
+    }
     </style>
 </head>
+
 <body>
     <nav>
         <div class="logo">
             <img src="logo.gif" alt="Logo" class="logo-img">
         </div>
         <div class="menu-toggle" onclick="toggleMenu()">
-            <img src="https://img.icons8.com/android/24/ffffff/menu.png"/>
+            <img src="https://img.icons8.com/android/24/ffffff/menu.png" />
         </div>
         <ul class="menu">
             <li><a href="halaman_admin.php">Beranda</a></li>
@@ -225,7 +231,9 @@
             <li><a href="bpjs.php">Arsip BPJS</a></li>
             <li><a href="skck.php">Arsip SKCK</a></li>
             <li><a href="umum.php">Arsip Umum</a></li>
+            <?php if (isset($_SESSION['level']) && $_SESSION['level'] === 'admin') : ?>
             <li><a href="d_user.php">User</a></li>
+            <?php endif; ?>
             <li><a class="logout" href="logout.php"><i class="fas fa-sign-out-alt"></i></a></li>
         </ul>
     </nav>
@@ -239,7 +247,9 @@
             </div>
             <div>
                 <input type="text" id="searchInput" placeholder="Cari..." style="padding: 10px; font-size: 16px;">
-                <button onclick="searchData()" style="padding: 10px; background: #28a745; color: white; border: none; cursor: pointer;"><i class="fas fa-search"></i></button>
+                <button onclick="searchData()"
+                    style="padding: 10px; background: #28a745; color: white; border: none; cursor: pointer;"><i
+                        class="fas fa-search"></i></button>
             </div>
         </div>
         <div class="table-responsive">
@@ -323,29 +333,31 @@
 
         <div class="pagination">
             <?php if ($page > 1): ?>
-                <a href="?page=<?php echo $page - 1; ?>&search=<?php echo $search; ?>">Previous</a>
+            <a href="?page=<?php echo $page - 1; ?>&search=<?php echo $search; ?>">Previous</a>
             <?php endif; ?>
-            
+
             <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                <a href="?page=<?php echo $i; ?>&search=<?php echo $search; ?>" class="<?php echo $page == $i ? 'active' : ''; ?>"><?php echo $i; ?></a>
+            <a href="?page=<?php echo $i; ?>&search=<?php echo $search; ?>"
+                class="<?php echo $page == $i ? 'active' : ''; ?>"><?php echo $i; ?></a>
             <?php endfor; ?>
 
             <?php if ($page < $total_pages): ?>
-                <a href="?page=<?php echo $page + 1; ?>&search=<?php echo $search; ?>">Next</a>
+            <a href="?page=<?php echo $page + 1; ?>&search=<?php echo $search; ?>">Next</a>
             <?php endif; ?>
         </div>
     </div>
 
     <script>
-        function toggleMenu() {
-            const menu = document.querySelector('.menu');
-            menu.classList.toggle('open');
-        }
+    function toggleMenu() {
+        const menu = document.querySelector('.menu');
+        menu.classList.toggle('open');
+    }
 
-        function searchData() {
-            const searchInput = document.getElementById('searchInput').value;
-            window.location.href = '?search=' + searchInput;
-        }
+    function searchData() {
+        const searchInput = document.getElementById('searchInput').value;
+        window.location.href = '?search=' + searchInput;
+    }
     </script>
 </body>
+
 </html>

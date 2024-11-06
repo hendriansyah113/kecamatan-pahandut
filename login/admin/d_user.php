@@ -1,3 +1,11 @@
+<?php
+// Cek apakah pengguna sudah login dan apakah levelnya adalah admin
+if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'admin') {
+    // Jika bukan admin, arahkan ke halaman beranda
+    header("Location: halaman_admin.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html>
 

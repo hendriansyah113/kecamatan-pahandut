@@ -1,41 +1,36 @@
-<?php 
-// mengaktifkan session pada php
+<?php
 session_start();
- 
-// menghubungkan php dengan koneksi database
-include 'koneksi.php';
- 
-// menangkap data yang dikirim dari form login
+include 'koneksi.php'; // Pastikan koneksi sudah benar
+
+// Ambil data dari form login
 $username = $_POST['username'];
 $password = $_POST['password'];
- 
- 
-// menyeleksi data user dengan username dan password yang sesuai
-$login = mysqli_query($koneksi,"select * from login where username='$username' and password='$password'");
-// menghitung jumlah data yang ditemukan
-$cek = mysqli_num_rows($login);
- 
-// cek apakah username dan password di temukan pada database
-if($cek > 0){
- 
-	$data = mysqli_fetch_assoc($login);
- 
-	// cek jika user login sebagai admin
-	if($data['level']=="admin"){
- 
-		// buat session login dan username
-		$_SESSION['username'] = $username;
-		$_SESSION['level'] = "admin";
-		// alihkan ke halaman dashboard admin
-		header("location:admin/halaman_admin.php");
- 
-	}else{
- 
-		// alihkan ke halaman login kembali
+
+// Seleksi data user berdasarkan username
+$sql = "SELECT * FROM login WHERE username = ?";
+$stmt = $koneksi->prepare($sql);
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Cek apakah username ditemukan
+if ($result->num_rows === 1) {
+	$data = $result->fetch_assoc();
+
+	// Cek password yang diinput dengan yang di-hash di database
+	if (password_verify($password, $data['password'])) {
+		// Jika password benar, buat session
+		$_SESSION['username'] = $data['username'];
+		$_SESSION['level'] = $data['level'];
+
+		// Redirect sesuai level atau kebutuhan
+		header("Location: admin/halaman_admin.php");
+		exit();
+	} else {
+		// Debugging tambahan untuk memverifikasi password
 		header("location:index.php?pesan=gagal");
-	}	
-}else{
+	}
+} else {
+	// Jika username tidak ditemukan
 	header("location:index.php?pesan=gagal");
 }
- 
-?>
