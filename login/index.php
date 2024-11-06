@@ -16,6 +16,12 @@
             echo "<div class='alert'>Username dan Password tidak sesuai !</div>";
         }
     }
+
+    if (isset($_GET['pesan'])) {
+        if ($_GET['pesan'] == "belum_login") {
+            echo "<div class='alert'>Anda Belum Login !</div>";
+        }
+    }
     ?>
     <div class="content">
 

@@ -1,5 +1,16 @@
+<?php
+session_start();
+
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['username'])) {
+    // Jika belum login, arahkan ke halaman login
+    header("Location: ../index.php?pesan=belum_login");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Tambah Data Arsip BPJS - Kecamatan Pahandut</title>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -121,12 +132,14 @@
             margin-bottom: 5px;
         }
 
-        .form-group input, .form-group textarea {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+
         .logout {
             display: flex;
             align-items: center;
@@ -144,6 +157,7 @@
         }
     </style>
 </head>
+
 <body>
     <nav>
         <div class="logo">
@@ -239,4 +253,5 @@
         ?>
     </div>
 </body>
+
 </html>

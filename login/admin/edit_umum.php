@@ -1,5 +1,16 @@
+<?php
+session_start();
+
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['username'])) {
+    // Jika belum login, arahkan ke halaman login
+    header("Location: ../index.php?pesan=belum_login");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Edit Umum - Kecamatan Pahandut</title>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -76,7 +87,8 @@
             border-radius: 10px;
         }
 
-        .btn-submit, .btn-back {
+        .btn-submit,
+        .btn-back {
             display: inline-block;
             padding: 10px 20px;
             font-size: 16px;
@@ -116,7 +128,8 @@
             margin-bottom: 5px;
         }
 
-        .form-group input, .form-group textarea {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
@@ -140,6 +153,7 @@
         }
     </style>
 </head>
+
 <body>
     <nav>
         <div class="logo">
@@ -236,4 +250,5 @@
         </form>
     </div>
 </body>
+
 </html>

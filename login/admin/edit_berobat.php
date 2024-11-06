@@ -1,5 +1,16 @@
+<?php
+session_start();
+
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['username'])) {
+    // Jika belum login, arahkan ke halaman login
+    header("Location: ../index.php?pesan=belum_login");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Edit Data Berobat - Kecamatan Pahandut</title>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -76,7 +87,8 @@
             border-radius: 10px;
         }
 
-        .btn-submit, .btn-back {
+        .btn-submit,
+        .btn-back {
             display: inline-block;
             padding: 10px 20px;
             font-size: 16px;
@@ -116,7 +128,8 @@
             margin-bottom: 5px;
         }
 
-        .form-group input, .form-group textarea {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
@@ -140,6 +153,7 @@
         }
     </style>
 </head>
+
 <body>
     <nav>
         <div class="logo">
@@ -218,9 +232,9 @@
         <form action="edit_berobat.php?id=<?php echo $id; ?>" method="post">
             <div class="form-group">
                 <div class="form-group">
-                <label for="nama_ttl">No KK</label>
-                <input type="text" id="no_KK" name="no_KK" value="<?php echo $row['no_KK']; ?>" required>
-            </div>
+                    <label for="nama_ttl">No KK</label>
+                    <input type="text" id="no_KK" name="no_KK" value="<?php echo $row['no_KK']; ?>" required>
+                </div>
                 <label for="tanggal">Tanggal</label>
                 <input type="date" id="tanggal" name="tanggal" value="<?php echo $row['tanggal']; ?>" required>
             </div>
@@ -241,4 +255,5 @@
         </form>
     </div>
 </body>
+
 </html>
