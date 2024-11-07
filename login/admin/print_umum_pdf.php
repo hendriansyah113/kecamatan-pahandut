@@ -1,9 +1,11 @@
 <?php
 require('fpdf/fpdf.php'); // Sertakan file FPDF
 
-class PDF extends FPDF {
+class PDF extends FPDF
+{
     // Header
-    function Header() {
+    function Header()
+    {
         $this->SetFont('Arial', 'B', 11);
         $this->Cell(0, 10, 'Data Umum', 0, 1, 'C');
         $this->SetFont('Arial', 'B', 10);
@@ -16,7 +18,8 @@ class PDF extends FPDF {
     }
 
     // Footer
-    function Footer() {
+    function Footer()
+    {
         $this->SetY(-15);
         $this->SetFont('Arial', 'I', 7);
         $this->Cell(0, 10, 'Halaman ' . $this->PageNo(), 0, 0, 'C');
@@ -43,12 +46,13 @@ if ($conn->connect_error) {
 }
 
 // Mengambil data dari database
-$sql = "SELECT id, tanggal, nama_ttl, alamat, ket FROM arsip_umum";
+$sql = "SELECT tanggal, nama_ttl, alamat, ket FROM arsip_umum";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        $pdf->Cell(8, 10, $row["id"], 1);
+    $row_number = 1;  // Variabel untuk nomor baris
+    while ($row = $result->fetch_assoc()) {
+        $pdf->Cell(8, 10, $row_number, 1);  // Menggunakan nomor baris
         $pdf->Cell(18, 10, $row["tanggal"], 1);
         $pdf->Cell(55, 10, $row["nama_ttl"], 1);
         $pdf->Cell(80, 10, $row["alamat"], 1);
@@ -63,4 +67,3 @@ $conn->close();
 
 // Output PDF
 $pdf->Output('I', 'Data_Umum.pdf');
-?>

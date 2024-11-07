@@ -155,6 +155,88 @@ if (!isset($_SESSION['username'])) {
             background: transparent;
             border: 1px solid indianred;
         }
+
+        @media (min-width: 768px) {
+            .container {
+                width: auto !important;
+                max-width: 900px;
+                /* Mengganti width menjadi auto */
+            }
+        }
+
+        @media only screen and (max-width: 1000px) {
+
+            .menu {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                position: absolute;
+                top: 60px;
+                left: 0;
+                z-index: 1;
+            }
+
+            .menu.open {
+                display: flex;
+            }
+
+            .menu a {
+                padding: 10px 0;
+                font-size: 50px;
+                width: 100%;
+                text-align: center;
+            }
+
+            .menu-toggle {
+                display: block;
+                cursor: pointer;
+                position: fixed;
+                top: 20px;
+                /* Jarak dari atas layar */
+                right: 100px;
+                /* Jarak dari kiri layar */
+                z-index: 1000;
+                /* Pastikan berada di depan elemen lainnya */
+            }
+
+            /* Jika menggunakan ikon gambar atau font-awesome, atur ukuran di sini */
+            .menu-toggle img {
+                width: 300%;
+                /* Sesuaikan lebar ikon */
+                height: auto;
+
+            }
+
+            body {
+                font-size: 18px;
+            }
+
+            h1 {
+                font-size: 5em;
+            }
+
+            h2 {
+                font-size: 3em;
+            }
+
+            p {
+                font-size: 2em;
+            }
+
+            label {
+                font-size: 30px;
+            }
+
+            .btn-submit {
+                font-size: 30px;
+            }
+
+            .btn-back {
+                font-size: 30px;
+            }
+        }
     </style>
 </head>
 
@@ -178,10 +260,6 @@ if (!isset($_SESSION['username'])) {
     <div class="container">
         <h2>Tambah Data Umum</h2>
         <form action="data_umum.php" method="post">
-            <div class="form-group">
-                <label for="id">NO</label>
-                <input type="text" id="id" name="id" required>
-            </div>
             <div class="form-group">
                 <label for="tanggal">Tanggal</label>
                 <input type="date" id="tanggal" name="tanggal" required>
@@ -220,14 +298,13 @@ if (!isset($_SESSION['username'])) {
             }
 
             // Mengambil data dari form
-            $id = $conn->real_escape_string($_POST["id"]);
             $tanggal = $conn->real_escape_string($_POST["tanggal"]);
             $nama_ttl = $conn->real_escape_string($_POST["nama_ttl"]);
             $alamat = $conn->real_escape_string($_POST["alamat"]);
             $ket = $conn->real_escape_string($_POST["ket"]);
 
             // Menyimpan data ke database
-            $sql = "INSERT INTO arsip_umum (id, tanggal, nama_ttl, alamat, ket) VALUES ('$id', '$tanggal', '$nama_ttl', '$alamat', '$ket')";
+            $sql = "INSERT INTO arsip_umum (tanggal, nama_ttl, alamat, ket) VALUES ('$tanggal', '$nama_ttl', '$alamat', '$ket')";
 
             if ($conn->query($sql) === TRUE) {
                 echo "<script>
