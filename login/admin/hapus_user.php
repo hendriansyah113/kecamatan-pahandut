@@ -17,7 +17,7 @@ if (isset($_GET['id'])) {
     }
 
     // Query untuk menghapus data berdasarkan id
-    $sql = "DELETE FROM login WHERE id = ?";
+    $sql = "DELETE FROM login WHERE id_admin = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
 

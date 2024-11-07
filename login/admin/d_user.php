@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Cek apakah pengguna sudah login dan apakah levelnya adalah admin
 if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'admin') {
     // Jika bukan admin, arahkan ke halaman beranda
@@ -6,6 +7,7 @@ if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'admin') {
     exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -221,6 +223,95 @@ if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'admin') {
         .pagination a:hover {
             background-color: #ddd;
         }
+
+        @media (min-width: 768px) {
+            .container {
+                width: auto !important;
+                /* Mengganti width menjadi auto */
+            }
+        }
+
+        @media only screen and (max-width: 1000px) {
+
+            .container {
+                width: none;
+            }
+
+            .menu {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                position: absolute;
+                top: 60px;
+                left: 0;
+                z-index: 1;
+            }
+
+            .menu.open {
+                display: flex;
+            }
+
+            .menu a {
+                padding: 10px 0;
+                font-size: 50px;
+                width: 100%;
+                text-align: center;
+            }
+
+            .menu-toggle {
+                display: block;
+                cursor: pointer;
+                position: fixed;
+                top: 20px;
+                /* Jarak dari atas layar */
+                right: 100px;
+                /* Jarak dari kiri layar */
+                z-index: 1000;
+                /* Pastikan berada di depan elemen lainnya */
+            }
+
+            /* Jika menggunakan ikon gambar atau font-awesome, atur ukuran di sini */
+            .menu-toggle img {
+                width: 300%;
+                /* Sesuaikan lebar ikon */
+                height: auto;
+
+            }
+
+            body {
+                font-size: 18px;
+            }
+
+            h1 {
+                font-size: 5em;
+            }
+
+            h2 {
+                font-size: 3em;
+            }
+
+            p {
+                font-size: 2em;
+            }
+
+            .btn-add {
+                font-size: 30px;
+            }
+
+            table {
+                font-size: 30px;
+            }
+
+            .pagination a {
+                font-size: 30px;
+            }
+
+            .search {
+                font-size: 30px;
+            }
+        }
     </style>
 </head>
 
@@ -249,7 +340,7 @@ if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'admin') {
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <div>
                 <a href="data_user.php" class="btn-add">Tambah Data</a>
-                <a href="print_pdf.php" class="btn-add">Cetak PDF</a>
+                <a href="print_user.php" class="btn-add">Cetak PDF</a>
             </div>
             <div>
                 <input type="text" id="searchInput" placeholder="Cari..." style="padding: 10px; font-size: 16px;">
@@ -320,8 +411,8 @@ if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'admin') {
                                     <td>' . $row["username"] . '</td>
                                     <td>' . $row["level"] . '</td>
                                     <td>
-                                       <a href="edit_user.php?id=' . $row["id"] . '" class="btn-add">Edit</a>
-                                       <a href="hapus_user.php?id=' . $row["id"] . '" class="btn-add" onclick="return confirm(\'Apakah Anda yakin ingin menghapus data ini?\')">Hapus</a>
+                                       <a href="edit_user.php?id=' . $row["id_admin"] . '" class="btn-add">Edit</a>
+                                       <a href="hapus_user.php?id=' . $row["id_admin"] . '" class="btn-add" onclick="return confirm(\'Apakah Anda yakin ingin menghapus data ini?\')">Hapus</a>
                                     </td>
                                   </tr>';
                             $no++;
