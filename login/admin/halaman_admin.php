@@ -98,7 +98,7 @@ if (!isset($_SESSION['username'])) {
             display: none;
         }
 
-        @media only screen and (max-width: 768px) {
+        @media only screen and (max-width: 1000px) {
             .menu {
                 display: none;
                 flex-direction: column;
@@ -117,6 +117,7 @@ if (!isset($_SESSION['username'])) {
 
             .menu a {
                 padding: 10px 0;
+                font-size: 50px;
                 width: 100%;
                 text-align: center;
             }
@@ -124,6 +125,37 @@ if (!isset($_SESSION['username'])) {
             .menu-toggle {
                 display: block;
                 cursor: pointer;
+                position: fixed;
+                top: 20px;
+                /* Jarak dari atas layar */
+                right: 100px;
+                /* Jarak dari kiri layar */
+                z-index: 1000;
+                /* Pastikan berada di depan elemen lainnya */
+            }
+
+            /* Jika menggunakan ikon gambar atau font-awesome, atur ukuran di sini */
+            .menu-toggle img {
+                width: 300%;
+                /* Sesuaikan lebar ikon */
+                height: auto;
+
+            }
+
+            body {
+                font-size: 18px;
+            }
+
+            h1 {
+                font-size: 5em;
+            }
+
+            h2 {
+                font-size: 3em;
+            }
+
+            p {
+                font-size: 2em;
             }
         }
 
