@@ -151,6 +151,88 @@ if (!isset($_SESSION['username'])) {
             background: transparent;
             border: 1px solid indianred;
         }
+
+        @media (min-width: 768px) {
+            .container {
+                width: auto !important;
+                max-width: 900px;
+                /* Mengganti width menjadi auto */
+            }
+        }
+
+        @media only screen and (max-width: 1000px) {
+
+            .menu {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                position: absolute;
+                top: 60px;
+                left: 0;
+                z-index: 1;
+            }
+
+            .menu.open {
+                display: flex;
+            }
+
+            .menu a {
+                padding: 10px 0;
+                font-size: 50px;
+                width: 100%;
+                text-align: center;
+            }
+
+            .menu-toggle {
+                display: block;
+                cursor: pointer;
+                position: fixed;
+                top: 20px;
+                /* Jarak dari atas layar */
+                right: 100px;
+                /* Jarak dari kiri layar */
+                z-index: 1000;
+                /* Pastikan berada di depan elemen lainnya */
+            }
+
+            /* Jika menggunakan ikon gambar atau font-awesome, atur ukuran di sini */
+            .menu-toggle img {
+                width: 300%;
+                /* Sesuaikan lebar ikon */
+                height: auto;
+
+            }
+
+            body {
+                font-size: 18px;
+            }
+
+            h1 {
+                font-size: 5em;
+            }
+
+            h2 {
+                font-size: 3em;
+            }
+
+            p {
+                font-size: 2em;
+            }
+
+            label {
+                font-size: 30px;
+            }
+
+            .btn-submit {
+                font-size: 30px;
+            }
+
+            .btn-back {
+                font-size: 30px;
+            }
+        }
     </style>
 </head>
 
@@ -193,7 +275,7 @@ if (!isset($_SESSION['username'])) {
 
         if ($id) {
             // Mengambil data dari database
-            $sql = "SELECT no_KK, tanggal, nama_ttl, alamat, ket FROM sktm_berobat WHERE id = $id";
+            $sql = "SELECT no_KK, tanggal, nama_ttl, alamat, ket FROM sktm_berobat WHERE id_sktm_berobat = $id";
             $result = $conn->query($sql);
 
             if ($result->num_rows == 1) {
@@ -214,7 +296,7 @@ if (!isset($_SESSION['username'])) {
             $ket = $conn->real_escape_string($_POST["ket"]);
 
             // Mengupdate data di database
-            $sql = "UPDATE sktm_berobat SET no_KK='$no_KK', tanggal='$tanggal', nama_ttl='$nama_ttl', alamat='$alamat', ket='$ket' WHERE id=$id";
+            $sql = "UPDATE sktm_berobat SET no_KK='$no_KK', tanggal='$tanggal', nama_ttl='$nama_ttl', alamat='$alamat', ket='$ket' WHERE id_sktm_berobat=$id";
 
             if ($conn->query($sql) === TRUE) {
                 echo "<script>
