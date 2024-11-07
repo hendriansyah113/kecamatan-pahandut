@@ -241,6 +241,9 @@ if (!isset($_SESSION['username'])) {
         <div class="logo">
             <img src="logo.gif" alt="Logo" class="logo-img">
         </div>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <img src="https://img.icons8.com/android/24/ffffff/menu.png" />
+        </div>
         <ul class="menu">
             <li><a href="halaman_admin.php">Beranda</a></li>
             <li><a href="pendidikan.php">SKTM Pendidikan</a></li>
@@ -248,7 +251,9 @@ if (!isset($_SESSION['username'])) {
             <li><a href="bpjs.php">Arsip BPJS</a></li>
             <li><a href="skck.php">Arsip SKCK</a></li>
             <li><a href="umum.php">Arsip Umum</a></li>
-            <li><a href="d_user.php">User</a></li>
+            <?php if (isset($_SESSION['level']) && $_SESSION['level'] === 'admin') : ?>
+                <li><a href="d_user.php">User</a></li>
+            <?php endif; ?>
             <li><a class="logout" href="logout.php"><i class="fas fa-sign-out-alt"></i></a></li>
         </ul>
     </nav>
@@ -341,6 +346,17 @@ if (!isset($_SESSION['username'])) {
             <a href="skck.php" class="btn-back">Kembali</a>
         </form>
     </div>
+    <script>
+        function toggleMenu() {
+            const menu = document.querySelector('.menu');
+            menu.classList.toggle('open');
+        }
+
+        function searchData() {
+            const searchInput = document.getElementById('searchInput').value;
+            window.location.href = '?search=' + searchInput;
+        }
+    </script>
 </body>
 
 </html>
