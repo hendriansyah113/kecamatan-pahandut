@@ -20,6 +20,7 @@ if ($result->num_rows === 1) {
 	// Cek password yang diinput dengan yang di-hash di database
 	if (password_verify($password, $data['password'])) {
 		// Jika password benar, buat session
+		$_SESSION['id_admin'] = $data['id_admin'];
 		$_SESSION['username'] = $data['username'];
 		$_SESSION['level'] = $data['level'];
 

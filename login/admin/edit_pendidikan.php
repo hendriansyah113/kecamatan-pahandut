@@ -151,6 +151,88 @@ if (!isset($_SESSION['username'])) {
             background: transparent;
             border: 1px solid indianred;
         }
+
+        @media (min-width: 768px) {
+            .container {
+                width: auto !important;
+                max-width: 900px;
+                /* Mengganti width menjadi auto */
+            }
+        }
+
+        @media only screen and (max-width: 1000px) {
+
+            .menu {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                position: absolute;
+                top: 60px;
+                left: 0;
+                z-index: 1;
+            }
+
+            .menu.open {
+                display: flex;
+            }
+
+            .menu a {
+                padding: 10px 0;
+                font-size: 50px;
+                width: 100%;
+                text-align: center;
+            }
+
+            .menu-toggle {
+                display: block;
+                cursor: pointer;
+                position: fixed;
+                top: 20px;
+                /* Jarak dari atas layar */
+                right: 100px;
+                /* Jarak dari kiri layar */
+                z-index: 1000;
+                /* Pastikan berada di depan elemen lainnya */
+            }
+
+            /* Jika menggunakan ikon gambar atau font-awesome, atur ukuran di sini */
+            .menu-toggle img {
+                width: 300%;
+                /* Sesuaikan lebar ikon */
+                height: auto;
+
+            }
+
+            body {
+                font-size: 18px;
+            }
+
+            h1 {
+                font-size: 5em;
+            }
+
+            h2 {
+                font-size: 3em;
+            }
+
+            p {
+                font-size: 2em;
+            }
+
+            label {
+                font-size: 30px;
+            }
+
+            .btn-submit {
+                font-size: 30px;
+            }
+
+            .btn-back {
+                font-size: 30px;
+            }
+        }
     </style>
 </head>
 
@@ -159,6 +241,9 @@ if (!isset($_SESSION['username'])) {
         <div class="logo">
             <img src="logo.gif" alt="Logo" class="logo-img">
         </div>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <img src="https://img.icons8.com/android/24/ffffff/menu.png" />
+        </div>
         <ul class="menu">
             <li><a href="halaman_admin.php">Beranda</a></li>
             <li><a href="pendidikan.php">SKTM Pendidikan</a></li>
@@ -166,7 +251,9 @@ if (!isset($_SESSION['username'])) {
             <li><a href="bpjs.php">Arsip BPJS</a></li>
             <li><a href="skck.php">Arsip SKCK</a></li>
             <li><a href="umum.php">Arsip Umum</a></li>
-            <li><a href="d_user.php">User</a></li>
+            <?php if (isset($_SESSION['level']) && $_SESSION['level'] === 'admin') : ?>
+                <li><a href="d_user.php">User</a></li>
+            <?php endif; ?>
             <li><a class="logout" href="logout.php"><i class="fas fa-sign-out-alt"></i></a></li>
         </ul>
     </nav>
@@ -193,7 +280,7 @@ if (!isset($_SESSION['username'])) {
 
         if ($id) {
             // Mengambil data dari database
-            $sql = "SELECT no_KK, tanggal, nama_ttl, alamat, ket FROM sktm_pend WHERE id = $id";
+            $sql = "SELECT no_KK, tanggal, nama_ttl, alamat, ket FROM sktm_pend WHERE id_sktm_pendidikan = $id";
             $result = $conn->query($sql);
 
             if ($result->num_rows == 1) {
@@ -214,7 +301,7 @@ if (!isset($_SESSION['username'])) {
             $ket = $conn->real_escape_string($_POST["ket"]);
 
             // Mengupdate data di database
-            $sql = "UPDATE sktm_pend SET no_KK='$no_KK', tanggal='$tanggal', nama_ttl='$nama_ttl', alamat='$alamat', ket='$ket' WHERE id=$id";
+            $sql = "UPDATE sktm_pend SET no_KK='$no_KK', tanggal='$tanggal', nama_ttl='$nama_ttl', alamat='$alamat', ket='$ket' WHERE id_sktm_pendidikan=$id";
 
             if ($conn->query($sql) === TRUE) {
                 echo "<script>
@@ -254,6 +341,17 @@ if (!isset($_SESSION['username'])) {
             <a href="pendidikan.php" class="btn-back">Kembali</a>
         </form>
     </div>
+    <script>
+        function toggleMenu() {
+            const menu = document.querySelector('.menu');
+            menu.classList.toggle('open');
+        }
+
+        function searchData() {
+            const searchInput = document.getElementById('searchInput').value;
+            window.location.href = '?search=' + searchInput;
+        }
+    </script>
 </body>
 
 </html>

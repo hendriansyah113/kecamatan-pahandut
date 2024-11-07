@@ -1,9 +1,11 @@
 <?php
 require('fpdf/fpdf.php'); // Sertakan file FPDF
 
-class PDF extends FPDF {
+class PDF extends FPDF
+{
     // Header
-    function Header() {
+    function Header()
+    {
         $this->SetFont('Arial', 'B', 11);
         $this->Cell(0, 10, 'Data SKTM Pendidikan', 0, 1, 'C');
         $this->SetFont('Arial', 'B', 10);
@@ -17,7 +19,8 @@ class PDF extends FPDF {
     }
 
     // Footer
-    function Footer() {
+    function Footer()
+    {
         $this->SetY(-15);
         $this->SetFont('Arial', 'I', 7);
         $this->Cell(0, 10, 'Halaman ' . $this->PageNo(), 0, 0, 'C');
@@ -44,12 +47,13 @@ if ($conn->connect_error) {
 }
 
 // Mengambil data dari database
-$sql = "SELECT id, no_KK, tanggal, nama_ttl, alamat, ket FROM sktm_pend";
+$sql = "SELECT * FROM sktm_pend";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        $pdf->Cell(8, 10, $row["id"], 1);
+    $row_number = 1;  // Variabel untuk nomor baris
+    while ($row = $result->fetch_assoc()) {
+        $pdf->Cell(8, 10, $row_number, 1);  // Menggunakan nomor baris
         $pdf->Cell(30, 10, $row["no_KK"], 1);
         $pdf->Cell(25, 10, $row["tanggal"], 1);
         $pdf->Cell(40, 10, $row["nama_ttl"], 1);
@@ -65,4 +69,3 @@ $conn->close();
 
 // Output PDF
 $pdf->Output('I', 'Data_SKTMPendidikan.pdf');
-?>

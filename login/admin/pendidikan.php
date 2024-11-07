@@ -86,35 +86,6 @@ if (!isset($_SESSION['username'])) {
             display: none;
         }
 
-        @media only screen and (max-width: 768px) {
-            .menu {
-                display: none;
-                flex-direction: column;
-                align-items: center;
-                width: 100%;
-                background: rgba(0, 0, 0, 0.8);
-                position: absolute;
-                top: 60px;
-                left: 0;
-                z-index: 1;
-            }
-
-            .menu.open {
-                display: flex;
-            }
-
-            .menu a {
-                padding: 10px 0;
-                width: 100%;
-                text-align: center;
-            }
-
-            .menu-toggle {
-                display: block;
-                cursor: pointer;
-            }
-        }
-
         .logout {
             display: flex;
             align-items: center;
@@ -223,6 +194,99 @@ if (!isset($_SESSION['username'])) {
         .pagination a:hover {
             background-color: #ddd;
         }
+
+        .search {
+            font-size: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                width: auto !important;
+                /* Mengganti width menjadi auto */
+            }
+        }
+
+        @media only screen and (max-width: 1000px) {
+
+            .container {
+                width: none;
+            }
+
+            .menu {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                position: absolute;
+                top: 60px;
+                left: 0;
+                z-index: 1;
+            }
+
+            .menu.open {
+                display: flex;
+            }
+
+            .menu a {
+                padding: 10px 0;
+                font-size: 50px;
+                width: 100%;
+                text-align: center;
+            }
+
+            .menu-toggle {
+                display: block;
+                cursor: pointer;
+                position: fixed;
+                top: 20px;
+                /* Jarak dari atas layar */
+                right: 100px;
+                /* Jarak dari kiri layar */
+                z-index: 1000;
+                /* Pastikan berada di depan elemen lainnya */
+            }
+
+            /* Jika menggunakan ikon gambar atau font-awesome, atur ukuran di sini */
+            .menu-toggle img {
+                width: 300%;
+                /* Sesuaikan lebar ikon */
+                height: auto;
+
+            }
+
+            body {
+                font-size: 18px;
+            }
+
+            h1 {
+                font-size: 5em;
+            }
+
+            h2 {
+                font-size: 3em;
+            }
+
+            p {
+                font-size: 2em;
+            }
+
+            .btn-add {
+                font-size: 30px;
+            }
+
+            table {
+                font-size: 30px;
+            }
+
+            .pagination a {
+                font-size: 30px;
+            }
+
+            .search {
+                font-size: 30px;
+            }
+        }
     </style>
 </head>
 
@@ -255,10 +319,10 @@ if (!isset($_SESSION['username'])) {
                 <a href="data_pendidikan.php" class="btn-add">Tambah Data</a>
                 <a href="print_pdf.php" class="btn-add">Cetak PDF</a>
             </div>
-            <div>
-                <input type="text" id="searchInput" placeholder="Cari..." style="padding: 10px; font-size: 16px;">
-                <button onclick="searchData()"
-                    style="padding: 10px; background: #28a745; color: white; border: none; cursor: pointer;"><i
+            <div class="search">
+                <input type="text" id="searchInput" placeholder="Cari..." class="search" style="padding: 10px;">
+                <button onclick="searchData()" class="icon"
+                    style="padding: 16px; background: #28a745; color: white; border: none; cursor: pointer;"><i
                         class="fas fa-search"></i></button>
             </div>
         </div>
@@ -273,11 +337,14 @@ if (!isset($_SESSION['username'])) {
                         <th>Alamat</th>
                         <th>Keterangan</th>
                         <th>Verifikasi</th>
+                        <th>Verifikator</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
+
+                    $id_admin = $_SESSION['id_admin'];
                     // Menghubungkan ke database
                     $servername = "localhost";
                     $username = "root";
@@ -300,17 +367,24 @@ if (!isset($_SESSION['username'])) {
                     // Mengambil nilai pencarian jika ada
                     $search = isset($_GET['search']) ? $_GET['search'] : '';
 
-                    // Mengambil total jumlah data
-                    $sql_count = "SELECT COUNT(*) AS total FROM sktm_pend";
+                    $sql_count = "SELECT COUNT(*) AS total 
+              FROM sktm_pend 
+              LEFT JOIN login ON sktm_pend.id_admin = login.id_admin";
+
                     if ($search) {
                         $sql_count .= " WHERE no_KK LIKE '%$search%' OR tanggal LIKE '%$search%' OR nama_ttl LIKE '%$search%' OR alamat LIKE '%$search%' OR ket LIKE '%$search%'";
                     }
-                    $result_count = $conn->query($sql_count);
-                    $total_data = $result_count->fetch_assoc()['total'];
-                    $total_pages = ceil($total_data / $limit);
 
-                    // Mengambil data dari database
-                    $sql = "SELECT * FROM sktm_pend";
+                    $result_count = $conn->query($sql_count);
+                    $row_count = $result_count->fetch_assoc();
+                    $total_data = $row_count['total']; // Ambil nilai dari 'total' yang dihitung oleh COUNT(*)
+
+                    $total_pages = ceil($total_data / $limit); // Hitung jumlah halaman
+
+
+                    $sql = "SELECT sktm_pend.*, login.nama AS nama_admin 
+                    FROM sktm_pend 
+                    LEFT JOIN login ON sktm_pend.id_admin = login.id_admin";
                     if ($search) {
                         $sql .= " WHERE no_KK LIKE '%$search%' OR tanggal LIKE '%$search%' OR nama_ttl LIKE '%$search%' OR alamat LIKE '%$search%' OR ket LIKE '%$search%'";
                     }
@@ -320,7 +394,7 @@ if (!isset($_SESSION['username'])) {
                     // Memproses verifikasi jika tombol 'Verifikasi' diklik
                     if (isset($_GET['verifikasi_id'])) {
                         $verifikasi_id = $conn->real_escape_string($_GET['verifikasi_id']);
-                        $sql_verifikasi = "UPDATE sktm_pend SET verifikasi = 'Terverifikasi' WHERE id = $verifikasi_id";
+                        $sql_verifikasi = "UPDATE sktm_pend SET verifikasi = 'Terverifikasi', id_admin = $id_admin WHERE id_sktm_pendidikan = $verifikasi_id";
 
                         if ($conn->query($sql_verifikasi) === TRUE) {
                             echo "<script>alert('Data berhasil diverifikasi.');</script>";
@@ -335,7 +409,7 @@ if (!isset($_SESSION['username'])) {
 
                     if (isset($_GET['cancel_verifikasi_id'])) {
                         $cancel_id = $_GET['cancel_verifikasi_id'];
-                        $sql_cancel_verifikasi = "UPDATE sktm_pend SET verifikasi = '' WHERE id = $cancel_id";
+                        $sql_cancel_verifikasi = "UPDATE sktm_pend SET verifikasi = '', id_admin = $id_admin WHERE id_sktm_pendidikan = $cancel_id";
                         if ($conn->query($sql_cancel_verifikasi) === TRUE) {
                             echo "<script>
                                     alert('Verifikasi dibatalkan.');
@@ -361,16 +435,17 @@ if (!isset($_SESSION['username'])) {
                                     <td>" . $row["alamat"] . "</td>
                                     <td>" . $row["ket"] . "</td>
                                        <td>" . (($row["verifikasi"] === null || $row["verifikasi"] === '') ? 'Belum Terverifikasi' : $row["verifikasi"]) . "</td>
+                                       <td>" . $row["nama_admin"] . "</td>
                                     <td>
-                    <a href='edit_pendidikan.php?id=" . $row["id"] . "' class='btn-add' style='margin-right: 5px;'>Edit</a>
-                    <a href='upload_foto.php?id=" . $row["id"] . "' class='btn-add' style='margin-right: 5px;'>Upload</a>
-                    <a href='view_sktm.php?id=" . $row["id"] . "' class='btn-add' style='margin-right: 5px;'>SKTM</a>";
+                    <a href='edit_pendidikan.php?id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-right: 5px;'>Edit</a>
+                    <a href='upload_foto.php?id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-right: 5px;'>Upload</a>
+                    <a href='view_sktm.php?id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-right: 5px;'>SKTM</a>";
 
                             // Cek status verifikasi untuk menampilkan tombol 'Verifikasi' atau status 'Terverifikasi'
                             if ($row['verifikasi'] == 'Terverifikasi') {
-                                echo "<a href='?cancel_verifikasi_id=" . $row["id"] . "' class='btn-add' style='margin-left: 5px;'>Cancel</a>";
+                                echo "<a href='?cancel_verifikasi_id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-left: 5px;'>Cancel</a>";
                             } else {
-                                echo "<a href='?verifikasi_id=" . $row["id"] . "' class='btn-add' style='margin-left: 5px;'>Verifikasi</a>";
+                                echo "<a href='?verifikasi_id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-left: 5px;'>Verifikasi</a>";
                             }
 
                             echo "</td></tr>";
