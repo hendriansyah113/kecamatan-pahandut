@@ -1,9 +1,11 @@
 <?php
 require('fpdf/fpdf.php'); // Sertakan file FPDF
 
-class PDF extends FPDF {
+class PDF extends FPDF
+{
     // Header
-    function Header() {
+    function Header()
+    {
         $this->SetFont('Arial', 'B', 11);
         $this->Cell(0, 10, 'Data Arsip BPJS', 0, 1, 'C');
         $this->SetFont('Arial', 'B', 10);
@@ -18,7 +20,8 @@ class PDF extends FPDF {
     }
 
     // Footer
-    function Footer() {
+    function Footer()
+    {
         $this->SetY(-15);
         $this->SetFont('Arial', 'I', 7);
         $this->Cell(0, 10, 'Halaman ' . $this->PageNo(), 0, 0, 'C');
@@ -45,12 +48,13 @@ if ($conn->connect_error) {
 }
 
 // Mengambil data dari database
-$sql = "SELECT id, nik, tanggal, nama, alamat, telpon, status FROM arsip_bpjs";
+$sql = "SELECT * FROM arsip_bpjs";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        $pdf->Cell(8, 10, $row["id"], 1);
+    $row_number = 1;  // Variabel untuk nomor baris
+    while ($row = $result->fetch_assoc()) {
+        $pdf->Cell(8, 10, $row_number, 1);  // Menggunakan nomor baris
         $pdf->Cell(30, 10, $row["nik"], 1);
         $pdf->Cell(20, 10, $row["tanggal"], 1);
         $pdf->Cell(35, 10, $row["nama"], 1);
@@ -67,4 +71,3 @@ $conn->close();
 
 // Output PDF
 $pdf->Output('I', 'Data_ArsipBPJS.pdf');
-?>
