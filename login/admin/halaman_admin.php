@@ -194,6 +194,7 @@ if (!isset($_SESSION['username'])) {
             menu.classList.toggle('open');
         }
     </script>
+    <link rel="manifest" href="../../web.webmanifest" />
 </head>
 
 <body>

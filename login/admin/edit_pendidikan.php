@@ -234,6 +234,7 @@ if (!isset($_SESSION['username'])) {
             }
         }
     </style>
+    <link rel="manifest" href="../../web.webmanifest" />
 </head>
 
 <body>

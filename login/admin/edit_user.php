@@ -271,6 +271,7 @@ if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'admin') {
             }
         }
     </style>
+    <link rel="manifest" href="../../web.webmanifest" />
 </head>
 
 <body>
