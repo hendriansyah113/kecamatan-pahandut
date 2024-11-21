@@ -81,6 +81,19 @@
     $alamat = $_POST['alamat'];
     $keterangan = $_POST['keterangan'];
     $tanggal = $_POST['tanggal'];
+    $formulir = NULL;
+
+    if (isset($_FILES['formulir']) && $_FILES['formulir']['error'] == 0) {
+      $targetDir = "login/admin/uploads/umum/";
+      $fileName = uniqid() . "_" . basename($_FILES['formulir']['name']);
+      $targetFilePath = $targetDir . $fileName;
+
+      if (move_uploaded_file($_FILES['formulir']['tmp_name'], $targetFilePath)) {
+        $formulir = $fileName;
+      } else {
+        echo "<div class='alert alert-danger'>Gagal mengunggah formulir!</div>";
+      }
+    }
 
     // Koneksi ke database
     $conn = new mysqli("localhost", "root", "", "kecamatan");
@@ -89,8 +102,8 @@
     }
 
     // Menyimpan data ke database dengan prepared statement
-    $sql = "INSERT INTO arsip_umum (nama_ttl, alamat, ket, tanggal)
-          VALUES (?, ?, ?, ?)";
+    $sql = "INSERT INTO arsip_umum (nama_ttl, alamat, ket, tanggal, formulir)
+          VALUES (?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
     if ($stmt === false) {
@@ -98,7 +111,7 @@
     }
 
     // Bind parameter
-    $stmt->bind_param("ssss", $nama_ttl, $alamat, $keterangan, $tanggal);
+    $stmt->bind_param("sssss", $nama_ttl, $alamat, $keterangan, $tanggal, $formulir);
 
     // Eksekusi statement dan cek hasilnya
     if ($stmt->execute()) {
@@ -153,6 +166,14 @@
           <div class="col-sm-9">
             <input type="text" class="form-control" id="keterangan" name="keterangan"
               placeholder="Masukkan Keterangan" required>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="formulir" class="col-sm-3 col-form-label">Unggah Formulir
+            (JPG/PNG/JPEG/PDF/DOC/DOCX)</label>
+          <div class="col-sm-9">
+            <input type="file" class="form-control" id="formulir" name="formulir">
           </div>
         </div>
 

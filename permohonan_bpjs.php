@@ -76,25 +76,39 @@
 
   <?php
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Ambil data dari form
     $nik = $_POST['nik'];
     $tanggal = $_POST['tanggal'];
     $nama = $_POST['nama'];
     $alamat = $_POST['alamat'];
     $telpon = $_POST['telpon'];
     $status = $_POST['status'];
+    $formulir = NULL;
 
-    // Koneksi ke database
+    if (isset($_FILES['formulir']) && $_FILES['formulir']['error'] == 0) {
+      $targetDir = "login/admin/uploads/bpjs/";
+      $fileName = uniqid() . "_" . basename($_FILES['formulir']['name']);
+      $targetFilePath = $targetDir . $fileName;
+
+      if (move_uploaded_file($_FILES['formulir']['tmp_name'], $targetFilePath)) {
+        $formulir = $fileName;
+      } else {
+        echo "<div class='alert alert-danger'>Gagal mengunggah formulir!</div>";
+      }
+    }
+
     $conn = new mysqli("localhost", "root", "", "kecamatan");
     if ($conn->connect_error) {
       die("<div class='alert alert-danger'>Koneksi gagal: " . $conn->connect_error . "</div>");
     }
 
-    // Menyimpan data ke database
-    $sql = "INSERT INTO arsip_bpjs (nik, tanggal, nama, alamat, telpon, status)
-          VALUES ('$nik', '$tanggal', '$nama', '$alamat', '$telpon','$status')";
+    $sql = "INSERT INTO arsip_bpjs (nik, tanggal, nama, alamat, telpon, status, formulir)
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    $stmt = $conn->prepare($sql);
+    if (!$stmt = $conn->prepare($sql)) {
+      die("<div class='alert alert-danger'>Kesalahan pada query SQL: " . $conn->error . "</div>");
+    }
+
+    $stmt->bind_param("sssssss", $nik, $tanggal, $nama, $alamat, $telpon, $status, $formulir);
 
     if ($stmt->execute()) {
       echo "<div class='alert alert-success'>Data berhasil disimpan!</div>";
@@ -106,6 +120,7 @@
     $conn->close();
   }
   ?>
+
 
   <!-- form section -->
   <section class="client_section layout_padding">
@@ -171,6 +186,14 @@
           <div class="col-sm-9">
             <textarea class="form-control" id="status" name="status" placeholder="status" rows="3"
               required></textarea>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="formulir" class="col-sm-3 col-form-label">Unggah Formulir
+            (JPG/PNG/JPEG/PDF/DOC/DOCX)</label>
+          <div class="col-sm-9">
+            <input type="file" class="form-control" id="formulir" name="formulir">
           </div>
         </div>
 
