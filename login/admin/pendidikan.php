@@ -369,8 +369,7 @@ if (!isset($_SESSION['username'])) {
                     $search = isset($_GET['search']) ? $_GET['search'] : '';
 
                     $sql_count = "SELECT COUNT(*) AS total 
-              FROM sktm_pend 
-              LEFT JOIN login ON sktm_pend.id_admin = login.id_admin";
+              FROM sktm_pend ";
 
                     if ($search) {
                         $sql_count .= " WHERE no_KK LIKE '%$search%' OR tanggal LIKE '%$search%' OR nama_ttl LIKE '%$search%' OR alamat LIKE '%$search%' OR ket LIKE '%$search%'";
@@ -383,34 +382,16 @@ if (!isset($_SESSION['username'])) {
                     $total_pages = ceil($total_data / $limit); // Hitung jumlah halaman
 
 
-                    $sql = "SELECT sktm_pend.*, login.nama AS nama_admin 
-                    FROM sktm_pend 
-                    LEFT JOIN login ON sktm_pend.id_admin = login.id_admin";
+                    $sql = "SELECT * FROM sktm_pend";
                     if ($search) {
                         $sql .= " WHERE no_KK LIKE '%$search%' OR tanggal LIKE '%$search%' OR nama_ttl LIKE '%$search%' OR alamat LIKE '%$search%' OR ket LIKE '%$search%'";
                     }
                     $sql .= " LIMIT $limit OFFSET $offset";
                     $result = $conn->query($sql);
 
-                    // Memproses verifikasi jika tombol 'Verifikasi' diklik
-                    if (isset($_GET['verifikasi_id'])) {
-                        $verifikasi_id = $conn->real_escape_string($_GET['verifikasi_id']);
-                        $sql_verifikasi = "UPDATE sktm_pend SET verifikasi = 'Terverifikasi', id_admin = $id_admin WHERE id_sktm_pendidikan = $verifikasi_id";
-
-                        if ($conn->query($sql_verifikasi) === TRUE) {
-                            echo "<script>alert('Data berhasil diverifikasi.');</script>";
-                            // Refresh halaman setelah verifikasi
-                            echo "<script>window.location.href = 'pendidikan.php';</script>";
-                        } else {
-                            echo "<script>alert('Gagal memverifikasi data.');</script>";
-                            // Refresh halaman jika gagal
-                            echo "<script>window.location.href = 'pendidikan.php';</script>";
-                        }
-                    }
-
                     if (isset($_GET['cancel_verifikasi_id'])) {
                         $cancel_id = $_GET['cancel_verifikasi_id'];
-                        $sql_cancel_verifikasi = "UPDATE sktm_pend SET verifikasi = '', id_admin = $id_admin WHERE id_sktm_pendidikan = $cancel_id";
+                        $sql_cancel_verifikasi = "UPDATE sktm_pend SET verifikasi = '', nama_verifikator = '' WHERE id_sktm_pendidikan = $cancel_id";
                         if ($conn->query($sql_cancel_verifikasi) === TRUE) {
                             echo "<script>
                                     alert('Verifikasi dibatalkan.');
@@ -436,7 +417,7 @@ if (!isset($_SESSION['username'])) {
                                     <td>" . $row["alamat"] . "</td>
                                     <td>" . $row["ket"] . "</td>
                                        <td>" . (($row["verifikasi"] === null || $row["verifikasi"] === '') ? 'Belum Terverifikasi' : $row["verifikasi"]) . "</td>
-                                       <td>" . $row["nama_admin"] . "</td>
+                                       <td>" . $row["nama_verifikator"] . "</td>
                                     <td>
                     <a href='edit_pendidikan.php?id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-right: 5px;'>Edit</a>
                     <a href='upload_foto.php?id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-right: 5px;'>Upload</a>
@@ -446,7 +427,7 @@ if (!isset($_SESSION['username'])) {
                             if ($row['verifikasi'] == 'Terverifikasi') {
                                 echo "<a href='?cancel_verifikasi_id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-left: 5px;'>Cancel</a>";
                             } else {
-                                echo "<a href='?verifikasi_id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-left: 5px;'>Verifikasi</a>";
+                                echo "<a href='verifikasi.php?id=" . $row["id_sktm_pendidikan"] . "&tabel=sktm_pend' class='btn-add' style='margin-left: 5px;'>Verifikasi</a>";
                             }
 
                             echo "</td></tr>";

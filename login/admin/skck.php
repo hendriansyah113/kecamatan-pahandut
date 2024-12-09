@@ -396,8 +396,7 @@ if (!isset($_SESSION['username'])) {
 
                     // Mengambil total jumlah data
                     $sql_count = "SELECT COUNT(*) AS total 
-                    FROM arsip_skck 
-                    LEFT JOIN login ON arsip_skck.id_admin = login.id_admin";
+                    FROM arsip_skck";
                     if ($search) {
                         $sql_count .= " WHERE nama_ttl LIKE '%$search%' OR pendidikan LIKE '%$search%' OR agama LIKE '%$search%' OR alamat LIKE '%$search%' OR keterangan LIKE '%$search%' OR tanggal LIKE '%$search%'";
                     }
@@ -406,34 +405,16 @@ if (!isset($_SESSION['username'])) {
                     $total_pages = ceil($total_data / $limit);
 
                     // Mengambil data dari database
-                    $sql = "SELECT arsip_skck.*, login.nama AS nama_admin 
-                    FROM arsip_skck 
-                    LEFT JOIN login ON arsip_skck.id_admin = login.id_admin";
+                    $sql = "SELECT * FROM arsip_skck";
                     if ($search) {
                         $sql .= " WHERE nama_ttl LIKE '%$search%' OR pendidikan LIKE '%$search%' OR agama LIKE '%$search%' OR alamat LIKE '%$search%' OR keterangan LIKE '%$search%' OR tanggal LIKE '%$search%'";
                     }
                     $sql .= " LIMIT $limit OFFSET $offset";
                     $result = $conn->query($sql);
 
-                    // Memproses verifikasi jika tombol 'Verifikasi' diklik
-                    if (isset($_GET['verifikasi_id'])) {
-                        $verifikasi_id = $conn->real_escape_string($_GET['verifikasi_id']);
-                        $sql_verifikasi = "UPDATE arsip_skck SET verifikasi = 'Terverifikasi', id_admin = $id_admin WHERE id_arsip_skck = $verifikasi_id";
-
-                        if ($conn->query($sql_verifikasi) === TRUE) {
-                            echo "<script>alert('Data berhasil diverifikasi.');</script>";
-                            // Refresh halaman setelah verifikasi
-                            echo "<script>window.location.href = 'skck.php';</script>";
-                        } else {
-                            echo "<script>alert('Gagal memverifikasi data.');</script>";
-                            // Refresh halaman jika gagal
-                            echo "<script>window.location.href = 'skck.php';</script>";
-                        }
-                    }
-
                     if (isset($_GET['cancel_verifikasi_id'])) {
                         $cancel_id = $_GET['cancel_verifikasi_id'];
-                        $sql_cancel_verifikasi = "UPDATE arsip_skck SET verifikasi = '', id_admin = $id_admin WHERE id_arsip_skck = $cancel_id";
+                        $sql_cancel_verifikasi = "UPDATE arsip_skck SET verifikasi = '', nama_verifikator = '' WHERE id_arsip_skck = $cancel_id";
                         if ($conn->query($sql_cancel_verifikasi) === TRUE) {
                             echo "<script>
                                     alert('Verifikasi dibatalkan.');
@@ -460,13 +441,13 @@ if (!isset($_SESSION['username'])) {
                                     <td>" . $row["keterangan"] . "</td>
                                     <td>" . $row["tanggal"] . "</td>
                                      <td>" . (($row["verifikasi"] === null || $row["verifikasi"] === '') ? 'Belum Terverifikasi' : $row["verifikasi"]) . "</td>
-                                      <td>" . $row["nama_admin"] . "</td>
+                                      <td>" . $row["nama_verifikator"] . "</td>
                                     <td><a href='edit_skck.php?id=" . $row["id_arsip_skck"] . "' class='btn-add'>Edit</a>";
                             // Cek status verifikasi untuk menampilkan tombol 'Verifikasi' atau status 'Terverifikasi'
                             if ($row['verifikasi'] == 'Terverifikasi') {
                                 echo "<a href='?cancel_verifikasi_id=" . $row["id_arsip_skck"] . "' class='btn-add' style='margin-left: 5px;'>Cancel</a>";
                             } else {
-                                echo "<a href='?verifikasi_id=" . $row["id_arsip_skck"] . "' class='btn-add' style='margin-left: 5px;'>Verifikasi</a>";
+                                echo "<a href='verifikasi_skck.php?id=" . $row["id_arsip_skck"] . "&tabel=arsip_skck' class='btn-add' style='margin-left: 5px;'>Verifikasi</a>";
                             }
 
                             echo "</td>

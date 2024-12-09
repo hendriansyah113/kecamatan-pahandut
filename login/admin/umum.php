@@ -394,8 +394,7 @@ if (!isset($_SESSION['username'])) {
 
                     // Mengambil total jumlah data
                     $sql_count = "SELECT COUNT(*) AS total 
-                    FROM arsip_umum 
-                    LEFT JOIN login ON arsip_umum.id_admin = login.id_admin";
+                    FROM arsip_umum";
                     if ($search) {
                         $sql_count .= " WHERE tanggal LIKE '%$search%' OR nama_ttl LIKE '%$search%' OR alamat LIKE '%$search%' OR ket LIKE '%$search%'";
                     }
@@ -404,34 +403,16 @@ if (!isset($_SESSION['username'])) {
                     $total_pages = ceil($total_data / $limit);
 
                     // Mengambil data dari database
-                    $sql = "SELECT arsip_umum.*, login.nama AS nama_admin 
-                    FROM arsip_umum 
-                    LEFT JOIN login ON arsip_umum.id_admin = login.id_admin";
+                    $sql = "SELECT * FROM arsip_umum";
                     if ($search) {
                         $sql .= " WHERE tanggal LIKE '%$search%' OR nama_ttl LIKE '%$search%' OR alamat LIKE '%$search%' OR ket LIKE '%$search%'";
                     }
                     $sql .= " LIMIT $limit OFFSET $offset";
                     $result = $conn->query($sql);
 
-                    // Memproses verifikasi jika tombol 'Verifikasi' diklik
-                    if (isset($_GET['verifikasi_id'])) {
-                        $verifikasi_id = $conn->real_escape_string($_GET['verifikasi_id']);
-                        $sql_verifikasi = "UPDATE arsip_umum SET verifikasi = 'Terverifikasi', id_admin = $id_admin WHERE id_arsip_umum = $verifikasi_id";
-
-                        if ($conn->query($sql_verifikasi) === TRUE) {
-                            echo "<script>alert('Data berhasil diverifikasi.');</script>";
-                            // Refresh halaman setelah verifikasi
-                            echo "<script>window.location.href = 'umum.php';</script>";
-                        } else {
-                            echo "<script>alert('Gagal memverifikasi data.');</script>";
-                            // Refresh halaman jika gagal
-                            echo "<script>window.location.href = 'umum.php';</script>";
-                        }
-                    }
-
                     if (isset($_GET['cancel_verifikasi_id'])) {
                         $cancel_id = $_GET['cancel_verifikasi_id'];
-                        $sql_cancel_verifikasi = "UPDATE arsip_umum SET verifikasi = '', id_admin = $id_admin WHERE id_arsip_umum = $cancel_id";
+                        $sql_cancel_verifikasi = "UPDATE arsip_umum SET verifikasi = '', nama_verifikator = '' WHERE id_arsip_umum = $cancel_id";
                         if ($conn->query($sql_cancel_verifikasi) === TRUE) {
                             echo "<script>
                                     alert('Verifikasi dibatalkan.');
@@ -456,13 +437,13 @@ if (!isset($_SESSION['username'])) {
                                     <td>" . $row["alamat"] . "</td>
                                     <td>" . $row["ket"] . "</td>
                                      <td>" . (($row["verifikasi"] === null || $row["verifikasi"] === '') ? 'Belum Terverifikasi' : $row["verifikasi"]) . "</td>
-                                     <td>" . $row["nama_admin"] . "</td>
+                                     <td>" . $row["nama_verifikator"] . "</td>
                                     <td><a href='edit_umum.php?id=" . $row["id_arsip_umum"] . "' class='btn-add'>Edit</a>";
                             // Cek status verifikasi untuk menampilkan tombol 'Verifikasi' atau status 'Terverifikasi'
                             if ($row['verifikasi'] == 'Terverifikasi') {
                                 echo "<a href='?cancel_verifikasi_id=" . $row["id_arsip_umum"] . "' class='btn-add' style='margin-left: 5px;'>Cancel</a>";
                             } else {
-                                echo "<a href='?verifikasi_id=" . $row["id_arsip_umum"] . "' class='btn-add' style='margin-left: 5px;'>Verifikasi</a>";
+                                echo "<a href='verifikasi_umum.php?id=" . $row["id_arsip_umum"] . "&tabel=arsip_umum' class='btn-add' style='margin-left: 5px;'>Verifikasi</a>";
                             }
 
                             echo "</td>
