@@ -30,6 +30,9 @@ $pdf = new PDF();
 $pdf->AddPage();
 $pdf->SetFont('Arial', '', 9);
 
+// Mengambil parameter pencarian dari URL
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+
 // Menghubungkan ke database
 $servername = "localhost";
 $username = "root";
@@ -46,12 +49,17 @@ if ($conn->connect_error) {
 
 // Mengambil data dari database
 $sql = "SELECT * FROM login";
+
+if ($search) {
+    // Jika ada pencarian, tambahkan kondisi pencarian
+    $sql .= " WHERE (nama LIKE '%$search%' OR username LIKE '%$search%' OR level LIKE '%$search%')";
+}
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     $row_number = 1;  // Variabel untuk nomor baris
     while ($row = $result->fetch_assoc()) {
-        $pdf->Cell(8, 10, $row_number, 1);  // Menggunakan nomor baris
+        $pdf->Cell(8, 10, $row_number++, 1);  // Menggunakan nomor baris
         $pdf->Cell(30, 10, $row["nama"], 1);
         $pdf->Cell(25, 10, $row["username"], 1);
         $pdf->Cell(40, 10, $row["level"], 1);

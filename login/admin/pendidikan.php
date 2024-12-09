@@ -7,6 +7,9 @@ if (!isset($_SESSION['username'])) {
     header("Location: ../index.php?pesan=belum_login");
     exit();
 }
+
+// Mengambil nilai pencarian jika ada
+$search = isset($_GET['search']) ? $_GET['search'] : '';
 ?>
 <!DOCTYPE html>
 <html>
@@ -318,7 +321,8 @@ if (!isset($_SESSION['username'])) {
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <div>
                 <a href="data_pendidikan.php" class="btn-add">Tambah Data</a>
-                <a href="print_pdf.php" class="btn-add">Cetak PDF</a>
+                <a href="print_pdf.php?search=<?php echo $search; ?>" class="btn-add">Cetak PDF</a>
+
             </div>
             <div class="search">
                 <input type="text" id="searchInput" placeholder="Cari..." class="search" style="padding: 10px;">
@@ -364,9 +368,6 @@ if (!isset($_SESSION['username'])) {
                     $limit = 10; // Batas data per halaman
                     $page = isset($_GET['page']) ? $_GET['page'] : 1;
                     $offset = ($page - 1) * $limit;
-
-                    // Mengambil nilai pencarian jika ada
-                    $search = isset($_GET['search']) ? $_GET['search'] : '';
 
                     $sql_count = "SELECT COUNT(*) AS total 
               FROM sktm_pend ";

@@ -33,6 +33,9 @@ $pdf = new PDF();
 $pdf->AddPage();
 $pdf->SetFont('Arial', '', 9);
 
+// Mengambil parameter pencarian dari URL
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+
 // Menghubungkan ke database
 $servername = "localhost";
 $username = "root";
@@ -48,13 +51,18 @@ if ($conn->connect_error) {
 }
 
 // Mengambil data dari database
-$sql = "SELECT * FROM arsip_bpjs";
+$sql = "SELECT * FROM arsip_bpjs WHERE verifikasi = 'Terverifikasi'";
+
+if ($search) {
+    // Jika ada pencarian, tambahkan kondisi pencarian
+    $sql .= " AND (nik LIKE '%$search%' OR tanggal LIKE '%$search%' OR nama LIKE '%$search%' OR alamat LIKE '%$search%' OR telpon LIKE '%$search%' OR status LIKE '%$search%')";
+}
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     $row_number = 1;  // Variabel untuk nomor baris
     while ($row = $result->fetch_assoc()) {
-        $pdf->Cell(8, 10, $row_number, 1);  // Menggunakan nomor baris
+        $pdf->Cell(8, 10, $row_number++, 1);  // Menggunakan nomor baris
         $pdf->Cell(30, 10, $row["nik"], 1);
         $pdf->Cell(20, 10, $row["tanggal"], 1);
         $pdf->Cell(35, 10, $row["nama"], 1);

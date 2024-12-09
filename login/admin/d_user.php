@@ -6,6 +6,9 @@ if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'admin') {
     header("Location: halaman_admin.php");
     exit();
 }
+
+// Mengambil nilai pencarian jika ada
+$search = isset($_GET['search']) ? $_GET['search'] : '';
 ?>
 
 <!DOCTYPE html>
@@ -341,7 +344,7 @@ if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'admin') {
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <div>
                 <a href="data_user.php" class="btn-add">Tambah Data</a>
-                <a href="print_user.php" class="btn-add">Cetak PDF</a>
+                <a href="print_user.php?search=<?php echo $search; ?>" class="btn-add">Cetak PDF</a>
             </div>
             <div>
                 <input type="text" id="searchInput" placeholder="Cari..." style="padding: 10px; font-size: 16px;">
@@ -388,7 +391,7 @@ if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'admin') {
                     // Mengambil total jumlah data
                     $sql_count = "SELECT COUNT(*) AS total FROM login";
                     if ($search) {
-                        $sql_count .= " WHERE no_KK LIKE '%$search%' OR tanggal LIKE '%$search%' OR nama_ttl LIKE '%$search%' OR alamat LIKE '%$search%' OR ket LIKE '%$search%'";
+                        $sql_count .= " WHERE nama LIKE '%$search%' OR username LIKE '%$search%' OR level LIKE '%$search'";
                     }
                     $result_count = $conn->query($sql_count);
                     $total_data = $result_count->fetch_assoc()['total'];

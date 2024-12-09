@@ -7,6 +7,9 @@ if (!isset($_SESSION['username'])) {
     header("Location: ../index.php?pesan=belum_login");
     exit();
 }
+
+// Mengambil nilai pencarian jika ada
+$search = isset($_GET['search']) ? $_GET['search'] : '';
 ?>
 <!DOCTYPE html>
 <html>
@@ -343,7 +346,7 @@ if (!isset($_SESSION['username'])) {
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <div>
                 <a href="data_umum.php" class="btn-add">Tambah Data</a>
-                <a href="print_umum_pdf.php" class="btn-add">Cetak PDF</a>
+                <a href="print_umum_pdf.php?search=<?php echo $search; ?>" class="btn-add">Cetak PDF</a>
             </div>
             <div>
                 <input type="text" id="searchInput" placeholder="Cari..." style="padding: 10px; font-size: 16px;">

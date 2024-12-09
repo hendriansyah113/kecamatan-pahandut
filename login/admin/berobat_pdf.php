@@ -32,6 +32,9 @@ $pdf = new PDF();
 $pdf->AddPage();
 $pdf->SetFont('Arial', '', 9);
 
+// Mengambil parameter pencarian dari URL
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+
 // Menghubungkan ke database
 $servername = "localhost";
 $username = "root";
@@ -47,13 +50,18 @@ if ($conn->connect_error) {
 }
 
 // Mengambil data dari database
-$sql = "SELECT * FROM sktm_berobat";
+$sql = "SELECT * FROM sktm_berobat WHERE verifikasi = 'Terverifikasi'";
+
+if ($search) {
+    // Jika ada pencarian, tambahkan kondisi pencarian
+    $sql .= " AND (no_KK LIKE '%$search%' OR tanggal LIKE '%$search%' OR nama_ttl LIKE '%$search%' OR alamat LIKE '%$search%' OR ket LIKE '%$search%')";
+}
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     $row_number = 1;  // Variabel untuk nomor baris
     while ($row = $result->fetch_assoc()) {
-        $pdf->Cell(8, 10, $row_number, 1);  // Menggunakan nomor baris
+        $pdf->Cell(8, 10, $row_number++, 1);  // Menggunakan nomor baris
         $pdf->Cell(30, 10, $row["no_KK"], 1);
         $pdf->Cell(25, 10, $row["tanggal"], 1);
         $pdf->Cell(40, 10, $row["nama_ttl"], 1);
