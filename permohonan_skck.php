@@ -62,7 +62,7 @@
                       class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item active">
-                  <a class="nav-link" href="about.html"> Layanan</a>
+                  <a class="nav-link" href="#"> Layanan</a>
                 </li>
               </ul>
             </div>

@@ -422,14 +422,7 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                                     <td>
                     <a href='edit_pendidikan.php?id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-right: 5px;'>Edit</a>
                     <a href='upload_foto.php?id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-right: 5px;'>Upload</a>
-                    <a href='view_sktm.php?id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-right: 5px;'>SKTM</a>";
-
-                            // Cek status verifikasi untuk menampilkan tombol 'Verifikasi' atau status 'Terverifikasi'
-                            if ($row['verifikasi'] == 'Terverifikasi') {
-                                echo "<a href='?cancel_verifikasi_id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-left: 5px;'>Cancel</a>";
-                            } else {
-                                echo "<a href='verifikasi.php?id=" . $row["id_sktm_pendidikan"] . "&tabel=sktm_pend' class='btn-add' style='margin-left: 5px;'>Verifikasi</a>";
-                            }
+                    <a href='view_sktm.php?id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-right: 5px;'>Dokumen</a>";
 
                             echo "</td></tr>";
                             $no++;

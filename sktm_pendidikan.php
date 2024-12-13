@@ -62,7 +62,7 @@
                       class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item active">
-                  <a class="nav-link" href="about.html"> Layanan</a>
+                  <a class="nav-link" href="#"> Layanan</a>
                 </li>
               </ul>
             </div>
@@ -104,23 +104,43 @@
       die("<div class='alert alert-danger'>Koneksi gagal: " . $conn->connect_error . "</div>");
     }
 
-    // Menyimpan data ke database
-    $sql = "INSERT INTO sktm_pend (no_kk, tanggal, nama_ttl, alamat, ket, formulir)
-          VALUES ('$no_kk', '$tanggal', '$nama_ttl', '$alamat', '$keterangan', ?)";
+    // Simpan data ke tabel sktm_pend
+    $sql_pend = "INSERT INTO sktm_pend (no_kk, tanggal, nama_ttl, alamat, ket)
+                 VALUES (?, ?, ?, ?, ?)";
+    $stmt_pend = $conn->prepare($sql_pend);
+    $stmt_pend->bind_param("sssss", $no_kk, $tanggal, $nama_ttl, $alamat, $keterangan);
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $formulir);  // Gunakan bind_param untuk menghindari SQL injection
+    if ($stmt_pend->execute()) {
+      // Ambil ID dari data yang baru disimpan
+      $pend_id = $stmt_pend->insert_id;
 
-    if ($stmt->execute()) {
-      echo "<div class='alert alert-success'>Data berhasil disimpan!</div>";
+      // Simpan data file formulir ke tabel dokumen_sktm
+      if ($formulir) {
+        $sql_dokumen = "INSERT INTO dokumen_sktm (user_id, sktm_path)
+                            VALUES (?, ?)";
+        $stmt_dokumen = $conn->prepare($sql_dokumen);
+
+        // Tambahkan path uploads/sktm/ sebelum nama file
+        $formulir_with_path = "uploads/sktm/" . $formulir;
+
+        $stmt_dokumen->bind_param("is", $pend_id, $formulir_with_path);
+
+        if ($stmt_dokumen->execute()) {
+          echo "<div class='alert alert-success'>Data berhasil disimpan, termasuk formulir!</div>";
+        } else {
+          echo "<div class='alert alert-danger'>Terjadi kesalahan menyimpan dokumen: " . $stmt_dokumen->error . "</div>";
+        }
+        $stmt_dokumen->close();
+      }
     } else {
-      echo "<div class='alert alert-danger'>Terjadi kesalahan: " . $stmt->error . "</div>";
+      echo "<div class='alert alert-danger'>Terjadi kesalahan: " . $stmt_pend->error . "</div>";
     }
 
-    $stmt->close();
+    $stmt_pend->close();
     $conn->close();
   }
   ?>
+
 
   <!-- form section -->
   <section class="client_section layout_padding">
@@ -173,9 +193,8 @@
               rows="3" required></textarea>
           </div>
         </div>
-
         <div class="form-group row">
-          <label for="formulir" class="col-sm-3 col-form-label">Unggah Formulir
+          <label for="formulir" class="col-sm-3 col-form-label">Unggah Formulir SKTM
             (JPG/PNG/JPEG/PDF/DOC/DOCX)</label>
           <div class="col-sm-9">
             <input type="file" class="form-control" id="formulir" name="formulir">

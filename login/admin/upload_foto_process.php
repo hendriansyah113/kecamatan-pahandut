@@ -55,41 +55,58 @@ $kk_target = $target_dir_kk . $kk_new_name;
 $ktp_target = $target_dir_ktp . $ktp_new_name;
 
 // Memeriksa tipe file yang diupload
-$allowed_types = array('jpg', 'jpeg', 'png', 'pdf');
+$allowed_types = array('jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx');
 
 $sktm_file_type = pathinfo($sktm_target, PATHINFO_EXTENSION);
 $kk_file_type = pathinfo($kk_target, PATHINFO_EXTENSION);
 $ktp_file_type = pathinfo($ktp_target, PATHINFO_EXTENSION);
 
-if (!in_array(strtolower($sktm_file_type), $allowed_types) ||
-    !in_array(strtolower($kk_file_type), $allowed_types) ||
-    !in_array(strtolower($ktp_file_type), $allowed_types)) {
-    echo "Hanya file JPG, JPEG, PNG, dan PDF yang diperbolehkan.";
-    exit;
+// Variabel final untuk path file
+$sktm_target_final = null;
+$kk_target_final = null;
+$ktp_target_final = null;
+
+if (!empty($_FILES['sktm']['tmp_name']) && move_uploaded_file($_FILES['sktm']['tmp_name'], $sktm_target)) {
+    $sktm_target_final = $sktm_target; // Simpan path jika file berhasil diunggah
 }
 
-// Memindahkan file ke folder tujuan
-if (move_uploaded_file($_FILES['sktm']['tmp_name'], $sktm_target) &&
-    move_uploaded_file($_FILES['kk']['tmp_name'], $kk_target) &&
-    move_uploaded_file($_FILES['ktp']['tmp_name'], $ktp_target)) {
+if (!empty($_FILES['kk']['tmp_name']) && move_uploaded_file($_FILES['kk']['tmp_name'], $kk_target)) {
+    $kk_target_final = $kk_target; // Simpan path jika file berhasil diunggah
+}
 
-    // Menyimpan path file ke database
-    $sql = "INSERT INTO dokumen_sktm (user_id, sktm_path, kk_path, ktp_path) 
-            VALUES (?, ?, ?, ?)";
+if (!empty($_FILES['ktp']['tmp_name']) && move_uploaded_file($_FILES['ktp']['tmp_name'], $ktp_target)) {
+    $ktp_target_final = $ktp_target; // Simpan path jika file berhasil diunggah
+}
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("isss", $id, $sktm_target, $kk_target, $ktp_target);
+// Query untuk menyimpan atau memperbarui path file di database
+$sql = "
+    INSERT INTO dokumen_sktm (user_id, sktm_path, kk_path, ktp_path)
+    VALUES (?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE
+        sktm_path = IF(VALUES(sktm_path) IS NOT NULL, VALUES(sktm_path), sktm_path),
+        kk_path = IF(VALUES(kk_path) IS NOT NULL, VALUES(kk_path), kk_path),
+        ktp_path = IF(VALUES(ktp_path) IS NOT NULL, VALUES(ktp_path), ktp_path)";
 
-    if ($stmt->execute()) {
-        echo "<script>alert('File berhasil diupload.'); window.location.href='pendidikan.php';</script>";
-    } else {
-        echo "Error: " . $stmt->error;
-    }
+$stmt = $conn->prepare($sql);
 
-    $stmt->close();
+if (!$stmt) {
+    die("Kesalahan pada query SQL: " . $conn->error);
+}
+
+// Bind parameter dengan nilai NULL jika file tidak diunggah
+$stmt->bind_param(
+    "isss",
+    $id,
+    $sktm_target_final,
+    $kk_target_final,
+    $ktp_target_final
+);
+
+if ($stmt->execute()) {
+    echo "<script>alert('File berhasil diupload atau diperbarui.'); window.location.href='pendidikan.php';</script>";
 } else {
-    echo "Terjadi kesalahan saat mengupload file.";
+    echo "Error: " . $stmt->error;
 }
 
+$stmt->close();
 $conn->close();
-?>
