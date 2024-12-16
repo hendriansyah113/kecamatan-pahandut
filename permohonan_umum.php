@@ -170,14 +170,6 @@
         </div>
 
         <div class="form-group row">
-          <label for="formulir" class="col-sm-3 col-form-label">Unggah Formulir
-            (JPG/PNG/JPEG/PDF/DOC/DOCX)</label>
-          <div class="col-sm-9">
-            <input type="file" class="form-control" id="formulir" name="formulir">
-          </div>
-        </div>
-
-        <div class="form-group row">
           <div class="col-sm-3"></div>
           <div class="col-sm-9">
             <button type="submit" class="btn btn-primary">Submit</button>

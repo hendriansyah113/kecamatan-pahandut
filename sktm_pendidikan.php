@@ -82,21 +82,28 @@
     $nama_ttl = $_POST['nama_ttl'];
     $alamat = $_POST['alamat'];
     $keterangan = $_POST['keterangan'];
-    $formulir = NULL;  // Inisialisasi formulir sebagai NULL
 
-    // Cek apakah file formulir diunggah
-    if (isset($_FILES['formulir']) && $_FILES['formulir']['error'] == 0) {
-      $targetDir = "login/admin/uploads/sktm/";  // Direktori penyimpanan file
-      $fileName = uniqid() . "_" . basename($_FILES['formulir']['name']); // Menambahkan kode unik
+    // Direktori penyimpanan file
+    $dirFormulir = "login/admin/uploads/sktm/";
+    $dirKK = "login/admin/uploads/kk/";
+    $dirKTP = "login/admin/uploads/ktp/";
+
+    // Fungsi untuk mengunggah file dan menghasilkan nama unik
+    function uploadFile($fileKey, $targetDir)
+    {
+      $fileName = uniqid() . "_" . basename($_FILES[$fileKey]['name']);
       $targetFilePath = $targetDir . $fileName;
-
-      // Pindahkan file ke server
-      if (move_uploaded_file($_FILES['formulir']['tmp_name'], $targetFilePath)) {
-        $formulir = $fileName;  // Simpan nama file jika berhasil diunggah
+      if (move_uploaded_file($_FILES[$fileKey]['tmp_name'], $targetFilePath)) {
+        return $fileName; // Kembalikan nama file jika berhasil
       } else {
-        echo "<div class='alert alert-danger'>Gagal mengunggah formulir!</div>";
+        die("<div class='alert alert-danger'>Gagal mengunggah file $fileKey!</div>");
       }
     }
+
+    // Unggah file formulir, KK, dan KTP
+    $formulir = uploadFile('formulir', $dirFormulir);
+    $kk = uploadFile('kk', $dirKK);
+    $ktp = uploadFile('ktp', $dirKTP);
 
     // Koneksi ke database
     $conn = new mysqli("localhost", "root", "", "kecamatan");
@@ -114,24 +121,24 @@
       // Ambil ID dari data yang baru disimpan
       $pend_id = $stmt_pend->insert_id;
 
-      // Simpan data file formulir ke tabel dokumen_sktm
-      if ($formulir) {
-        $sql_dokumen = "INSERT INTO dokumen_sktm (user_id, sktm_path)
-                            VALUES (?, ?)";
-        $stmt_dokumen = $conn->prepare($sql_dokumen);
+      // Simpan data file ke tabel dokumen_sktm
+      $sql_dokumen = "INSERT INTO dokumen_sktm (user_id, sktm_path, kk_path, ktp_path)
+                        VALUES (?, ?, ?, ?)";
+      $stmt_dokumen = $conn->prepare($sql_dokumen);
 
-        // Tambahkan path uploads/sktm/ sebelum nama file
-        $formulir_with_path = "uploads/sktm/" . $formulir;
+      // Tambahkan path lengkap ke nama file
+      $formulir_with_path = "uploads/sktm/" . $formulir;
+      $kk_with_path = "uploads/kk/" . $kk;
+      $ktp_with_path = "uploads/ktp/" . $ktp;
 
-        $stmt_dokumen->bind_param("is", $pend_id, $formulir_with_path);
+      $stmt_dokumen->bind_param("isss", $pend_id, $formulir_with_path, $kk_with_path, $ktp_with_path);
 
-        if ($stmt_dokumen->execute()) {
-          echo "<div class='alert alert-success'>Data berhasil disimpan, termasuk formulir!</div>";
-        } else {
-          echo "<div class='alert alert-danger'>Terjadi kesalahan menyimpan dokumen: " . $stmt_dokumen->error . "</div>";
-        }
-        $stmt_dokumen->close();
+      if ($stmt_dokumen->execute()) {
+        echo "<div class='alert alert-success'>Data berhasil disimpan, termasuk dokumen SKTM, KK, dan KTP!</div>";
+      } else {
+        echo "<div class='alert alert-danger'>Terjadi kesalahan menyimpan dokumen: " . $stmt_dokumen->error . "</div>";
       }
+      $stmt_dokumen->close();
     } else {
       echo "<div class='alert alert-danger'>Terjadi kesalahan: " . $stmt_pend->error . "</div>";
     }
@@ -140,7 +147,6 @@
     $conn->close();
   }
   ?>
-
 
   <!-- form section -->
   <section class="client_section layout_padding">
@@ -194,10 +200,29 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="formulir" class="col-sm-3 col-form-label">Unggah Formulir SKTM
-            (JPG/PNG/JPEG/PDF/DOC/DOCX)</label>
+          <label for="formulir" class="col-sm-3 col-form-label">Unggah Formulir SKTM <span
+              class="text-danger">*</span>
+            (JPG/PNG/JPEG/PDF)</label>
           <div class="col-sm-9">
-            <input type="file" class="form-control" id="formulir" name="formulir">
+            <input type="file" class="form-control" id="formulir" name="formulir"
+              accept=".jpg,.jpeg,.png,.pdf" required>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="ktp" class="col-sm-3 col-form-label">Unggah KTP <span class="text-danger">*</span>
+            (JPG/PNG/JPEG/PDF)</label>
+          <div class="col-sm-9">
+            <input type="file" class="form-control" id="ktp" name="ktp" accept=".jpg,.jpeg,.png,.pdf"
+              required>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="kk" class="col-sm-3 col-form-label">Unggah Kartu Keluarga <span
+              class="text-danger">*</span>
+            (JPG/PNG/JPEG/PDF)</label>
+          <div class="col-sm-9">
+            <input type="file" class="form-control" id="kk" name="kk" accept=".jpg,.jpeg,.png,.pdf"
+              required>
           </div>
         </div>
 

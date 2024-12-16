@@ -75,52 +75,70 @@
     <!-- end header section -->
 
     <?php
-  if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Ambil data dari form
-    $no_kk = $_POST['no_kk'];
-    $tanggal = $_POST['tanggal'];
-    $nama_ttl = $_POST['nama_ttl'];
-    $alamat = $_POST['alamat'];
-    $keterangan = $_POST['keterangan'];
-    $formulir = NULL;  // Inisialisasi formulir sebagai NULL
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Ambil data dari form
+        $no_kk = $_POST['no_kk'];
+        $tanggal = $_POST['tanggal'];
+        $nama_ttl = $_POST['nama_ttl'];
+        $alamat = $_POST['alamat'];
+        $keterangan = $_POST['keterangan'];
 
-    // Cek apakah file formulir diunggah
-    if (isset($_FILES['formulir']) && $_FILES['formulir']['error'] == 0) {
-      $targetDir = "login/admin/uploads/berobat/";  // Direktori penyimpanan file
-      $fileName = uniqid() . "_" . basename($_FILES['formulir']['name']); // Menambahkan kode unik
-      $targetFilePath = $targetDir . $fileName;
+        $kk = NULL;  // Inisialisasi kk sebagai NULL
+        $foto = NULL;  // Inisialisasi foto sebagai NULL
 
-      // Pindahkan file ke server
-      if (move_uploaded_file($_FILES['formulir']['tmp_name'], $targetFilePath)) {
-        $formulir = $fileName;  // Simpan nama file jika berhasil diunggah
-      } else {
-        echo "<div class='alert alert-danger'>Gagal mengunggah formulir!</div>";
-      }
+        $dirKK = "login/admin/uploads/kk/";
+        $dirFoto = "login/admin/uploads/foto/";
+
+        // Fungsi untuk mengunggah file dan menghasilkan nama unik
+        function uploadFile($fileKey, $targetDir)
+        {
+            if (!empty($_FILES[$fileKey]['name'])) {
+                $fileName = uniqid() . "_" . basename($_FILES[$fileKey]['name']);
+                $targetFilePath = $targetDir . $fileName;
+                if (move_uploaded_file($_FILES[$fileKey]['tmp_name'], $targetFilePath)) {
+                    return $fileName; // Kembalikan nama file jika berhasil
+                } else {
+                    die("<div class='alert alert-danger'>Gagal mengunggah file $fileKey!</div>");
+                }
+            }
+            return NULL; // Jika tidak ada file yang diunggah, kembalikan NULL
+        }
+
+        // Upload file
+        $kk = uploadFile('kk', $dirKK); // Wajib
+        $foto = uploadFile('foto', $dirFoto); // Opsional
+
+        // Koneksi ke database
+        $conn = new mysqli("localhost", "root", "", "kecamatan");
+        if ($conn->connect_error) {
+            die("<div class='alert alert-danger'>Koneksi gagal: " . $conn->connect_error . "</div>");
+        }
+
+        // Menyimpan data ke database
+        $sql = "INSERT INTO sktm_berobat (no_kk, tanggal, nama_ttl, alamat, ket, kk_path, foto_path) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param(
+            "sssssss",
+            $no_kk,
+            $tanggal,
+            $nama_ttl,
+            $alamat,
+            $keterangan,
+            $kk,
+            $foto
+        );
+
+        if ($stmt->execute()) {
+            echo "<div class='alert alert-success'>Data berhasil disimpan!</div>";
+        } else {
+            echo "<div class='alert alert-danger'>Terjadi kesalahan: " . $stmt->error . "</div>";
+        }
+
+        $stmt->close();
+        $conn->close();
     }
-
-    // Koneksi ke database
-    $conn = new mysqli("localhost", "root", "", "kecamatan");
-    if ($conn->connect_error) {
-      die("<div class='alert alert-danger'>Koneksi gagal: " . $conn->connect_error . "</div>");
-    }
-
-    // Menyimpan data ke database
-    $sql = "INSERT INTO sktm_berobat (no_kk, tanggal, nama_ttl, alamat, ket, formulir)
-          VALUES ('$no_kk', '$tanggal', '$nama_ttl', '$alamat', '$keterangan', ?)";
-
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $formulir);  // Gunakan bind_param untuk menghindari SQL injection
-
-    if ($stmt->execute()) {
-      echo "<div class='alert alert-success'>Data berhasil disimpan!</div>";
-    } else {
-      echo "<div class='alert alert-danger'>Terjadi kesalahan: " . $stmt->error . "</div>";
-    }
-
-    $stmt->close();
-    $conn->close();
-  }
-  ?>
+    ?>
 
     <!-- form section -->
     <section class="client_section layout_padding">
@@ -175,10 +193,20 @@
                 </div>
 
                 <div class="form-group row">
-                    <label for="formulir" class="col-sm-3 col-form-label">Unggah Formulir
-                        (JPG/PNG/JPEG/PDF/DOC/DOCX)</label>
+                    <label for="kk" class="col-sm-3 col-form-label">Unggah Kartu Keluarga <span
+                            class="text-danger">*</span>
+                        (JPG/PNG/JPEG/PDF)</label>
                     <div class="col-sm-9">
-                        <input type="file" class="form-control" id="formulir" name="formulir">
+                        <input type="file" class="form-control" id="kk" name="kk" accept=".jpg,.jpeg,.png,.pdf"
+                            required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="foto" class="col-sm-3 col-form-label">Foto Kondisi Sakit (Opsional)
+                        (JPG/PNG/JPEG/PDF)</label>
+                    <div class="col-sm-9">
+                        <input type="file" class="form-control" id="foto" name="foto" accept=".jpg,.jpeg,.png,.pdf">
                     </div>
                 </div>
 

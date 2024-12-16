@@ -83,19 +83,29 @@
     $alamat = $_POST['alamat'];
     $keterangan = $_POST['keterangan'];
     $tanggal = $_POST['tanggal'];
-    $formulir = NULL;
+    $kelurahan = NULL;
+    $ktp = NULL;  // Inisialisasi ktp sebagai NULL
+    $kk = NULL;  // Inisialisasi kk sebagai NULL
 
-    if (isset($_FILES['formulir']) && $_FILES['formulir']['error'] == 0) {
-      $targetDir = "login/admin/uploads/skck/";
-      $fileName = uniqid() . "_" . basename($_FILES['formulir']['name']);
+    $dirKTP = "login/admin/uploads/ktp/";
+    $dirKK = "login/admin/uploads/kk/";
+    $dirkelurahan = "login/admin/uploads/kelurahan/";
+
+    function uploadFile($fileKey, $targetDir)
+    {
+      $fileName = uniqid() . "_" . basename($_FILES[$fileKey]['name']);
       $targetFilePath = $targetDir . $fileName;
-
-      if (move_uploaded_file($_FILES['formulir']['tmp_name'], $targetFilePath)) {
-        $formulir = $fileName;
+      if (move_uploaded_file($_FILES[$fileKey]['tmp_name'], $targetFilePath)) {
+        return $fileName; // Kembalikan nama file jika berhasil
       } else {
-        echo "<div class='alert alert-danger'>Gagal mengunggah formulir!</div>";
+        die("<div class='alert alert-danger'>Gagal mengunggah file $fileKey!</div>");
       }
     }
+
+    // Unggah file formulir, KK, dan KTP
+    $kelurahan = uploadFile('kelurahan', $dirkelurahan);
+    $kk = uploadFile('kk', $dirKK);
+    $ktp = uploadFile('ktp', $dirKTP);
 
     // Koneksi ke database
     $conn = new mysqli("localhost", "root", "", "kecamatan");
@@ -104,8 +114,8 @@
     }
 
     // Menyimpan data ke database dengan prepared statement
-    $sql = "INSERT INTO arsip_skck (nama_ttl, pendidikan, agama, alamat, keterangan, tanggal, formulir)
-          VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO arsip_skck (nama_ttl, pendidikan, agama, alamat, keterangan, tanggal, kelurahan_path, ktp_path, kk_path )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
     if ($stmt === false) {
@@ -113,7 +123,7 @@
     }
 
     // Bind parameter
-    $stmt->bind_param("sssssss", $nama_ttl, $pendidikan, $agama, $alamat, $keterangan, $tanggal, $formulir);
+    $stmt->bind_param("sssssssss", $nama_ttl, $pendidikan, $agama, $alamat, $keterangan, $tanggal, $kelurahan, $ktp, $kk);
 
     // Eksekusi statement dan cek hasilnya
     if ($stmt->execute()) {
@@ -189,10 +199,30 @@
         </div>
 
         <div class="form-group row">
-          <label for="formulir" class="col-sm-3 col-form-label">Unggah Formulir
-            (JPG/PNG/JPEG/PDF/DOC/DOCX)</label>
+          <label for="kelurahan" class="col-sm-3 col-form-label">Surat dari Kelurahan <span
+              class="text-danger">*</span>
+            (JPG/PNG/JPEG/PDF)</label>
           <div class="col-sm-9">
-            <input type="file" class="form-control" id="formulir" name="formulir">
+            <input type="file" class="form-control" id="kelurahan" name="kelurahan"
+              accept=".jpg,.jpeg,.png,.pdf" required>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="kk" class="col-sm-3 col-form-label">Kartu Keluarga <span class="text-danger">*</span>
+            (JPG/PNG/JPEG/PDF)</label>
+          <div class="col-sm-9">
+            <input type="file" class="form-control" id="kk" name="kk" accept=".jpg,.jpeg,.png,.pdf"
+              required>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="ktp" class="col-sm-3 col-form-label">KTP <span class="text-danger">*</span>
+            (JPG/PNG/JPEG/PDF)</label>
+          <div class="col-sm-9">
+            <input type="file" class="form-control" id="ktp" name="ktp" accept=".jpg,.jpeg,.png,.pdf"
+              required>
           </div>
         </div>
 

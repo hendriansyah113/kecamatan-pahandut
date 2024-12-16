@@ -82,33 +82,44 @@
     $alamat = $_POST['alamat'];
     $telpon = $_POST['telpon'];
     $status = $_POST['status'];
-    $formulir = NULL;
+    $ktp = NULL;  // Inisialisasi ktp sebagai NULL
+    $foto = NULL;  // Inisialisasi foto sebagai NULL
 
-    if (isset($_FILES['formulir']) && $_FILES['formulir']['error'] == 0) {
-      $targetDir = "login/admin/uploads/bpjs/";
-      $fileName = uniqid() . "_" . basename($_FILES['formulir']['name']);
-      $targetFilePath = $targetDir . $fileName;
+    $dirktp = "login/admin/uploads/ktp/";
+    $dirFoto = "login/admin/uploads/foto/";
 
-      if (move_uploaded_file($_FILES['formulir']['tmp_name'], $targetFilePath)) {
-        $formulir = $fileName;
-      } else {
-        echo "<div class='alert alert-danger'>Gagal mengunggah formulir!</div>";
+    // Fungsi untuk mengunggah file dan menghasilkan nama unik
+    function uploadFile($fileKey, $targetDir)
+    {
+      if (!empty($_FILES[$fileKey]['name'])) {
+        $fileName = uniqid() . "_" . basename($_FILES[$fileKey]['name']);
+        $targetFilePath = $targetDir . $fileName;
+        if (move_uploaded_file($_FILES[$fileKey]['tmp_name'], $targetFilePath)) {
+          return $fileName; // Kembalikan nama file jika berhasil
+        } else {
+          die("<div class='alert alert-danger'>Gagal mengunggah file $fileKey!</div>");
+        }
       }
+      return NULL; // Jika tidak ada file yang diunggah, kembalikan NULL
     }
+
+    // Upload file
+    $ktp = uploadFile('ktp', $dirktp); // Wajib
+    $foto = uploadFile('foto', $dirFoto); // Opsional
 
     $conn = new mysqli("localhost", "root", "", "kecamatan");
     if ($conn->connect_error) {
       die("<div class='alert alert-danger'>Koneksi gagal: " . $conn->connect_error . "</div>");
     }
 
-    $sql = "INSERT INTO arsip_bpjs (nik, tanggal, nama, alamat, telpon, status, formulir)
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO arsip_bpjs (nik, tanggal, nama, alamat, telpon, status, ktp_path, foto_path)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     if (!$stmt = $conn->prepare($sql)) {
       die("<div class='alert alert-danger'>Kesalahan pada query SQL: " . $conn->error . "</div>");
     }
 
-    $stmt->bind_param("sssssss", $nik, $tanggal, $nama, $alamat, $telpon, $status, $formulir);
+    $stmt->bind_param("ssssssss", $nik, $tanggal, $nama, $alamat, $telpon, $status, $ktp, $foto);
 
     if ($stmt->execute()) {
       echo "<div class='alert alert-success'>Data berhasil disimpan!</div>";
@@ -190,10 +201,19 @@
         </div>
 
         <div class="form-group row">
-          <label for="formulir" class="col-sm-3 col-form-label">Unggah Formulir
-            (JPG/PNG/JPEG/PDF/DOC/DOCX)</label>
+          <label for="ktp" class="col-sm-3 col-form-label">Unggah KTP <span class="text-danger">*</span>
+            (JPG/PNG/JPEG/PDF)</label>
           <div class="col-sm-9">
-            <input type="file" class="form-control" id="formulir" name="formulir">
+            <input type="file" class="form-control" id="ktp" name="ktp" accept=".jpg,.jpeg,.png,.pdf"
+              required>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="foto" class="col-sm-3 col-form-label">Foto Kondisi Sakit (Opsional)
+            (JPG/PNG/JPEG/PDF)</label>
+          <div class="col-sm-9">
+            <input type="file" class="form-control" id="foto" name="foto" accept=".jpg,.jpeg,.png,.pdf">
           </div>
         </div>
 
