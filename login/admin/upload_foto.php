@@ -367,7 +367,7 @@ WHERE sktm_pend.id_sktm_pendidikan = $id;
 
             <div class="form-group">
                 <label for="sktm">Upload SKTM :</label>
-                <input type="file" name="sktm" class="form-control">
+                <input type="file" name="sktm" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
                 <div>
                     <?php
                     if (file_exists($row['sktm_path'])) {
@@ -378,9 +378,9 @@ WHERE sktm_pend.id_sktm_pendidikan = $id;
                     ?>
                 </div>
             </div>
-            <div class="form-group">
+            <div class=" form-group">
                 <label for="kk">Upload KK :</label>
-                <input type="file" name="kk" class="form-control">
+                <input type="file" name="kk" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
                 <div>
                     <?php
                     if (file_exists($row['kk_path'])) {
@@ -391,9 +391,9 @@ WHERE sktm_pend.id_sktm_pendidikan = $id;
                     ?>
                 </div>
             </div>
-            <div class="form-group">
+            <div class=" form-group">
                 <label for="ktp">Upload KTP :</label>
-                <input type="file" name="ktp" class="form-control">
+                <input type="file" name="ktp" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
                 <div>
                     <?php
                     if (file_exists($row['ktp_path'])) {
@@ -404,7 +404,7 @@ WHERE sktm_pend.id_sktm_pendidikan = $id;
                     ?>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Upload</button>
+            <button type=" submit" class="btn btn-primary">Upload</button>
             <a href="pendidikan.php" class="btn-back">Kembali</a>
         </form>
     </div>

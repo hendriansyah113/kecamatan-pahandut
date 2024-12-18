@@ -25,8 +25,11 @@ if ($id > 0 && $nama_verifikasi) {
     $stmt->bind_param("si", $nama_verifikasi, $id);
 
     if ($stmt->execute()) {
-        // Redirect setelah berhasil verifikasi
-        header("Location: pendidikan.php?pesan=verifikasi_sukses");
+        // Alert dan redirect setelah berhasil verifikasi
+        echo "<script>
+       alert('Verifikasi berhasil dilakukan.');
+       window.location.href = 'pendidikan.php?pesan=verifikasi_sukses';
+   </script>";
     } else {
         echo "Terjadi kesalahan: " . $stmt->error;
     }

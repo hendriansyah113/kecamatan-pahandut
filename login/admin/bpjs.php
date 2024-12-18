@@ -415,22 +415,6 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                     $sql .= " LIMIT $limit OFFSET $offset";
                     $result = $conn->query($sql);
 
-                    if (isset($_GET['cancel_verifikasi_id'])) {
-                        $cancel_id = $_GET['cancel_verifikasi_id'];
-                        $sql_cancel_verifikasi = "UPDATE arsip_bpjs SET verifikasi = '', nama_verifikator = '' WHERE id_arsip_bpjs = $cancel_id";
-                        if ($conn->query($sql_cancel_verifikasi) === TRUE) {
-                            echo "<script>
-                                    alert('Verifikasi dibatalkan.');
-                                    window.location.href = 'bpjs.php';
-                                  </script>";
-                        } else {
-                            echo "<script>
-                                    alert('Gagal membatalkan verifikasi.');
-                                    window.location.href = 'bpjs.php';
-                                  </script>";
-                        }
-                    }
-
                     if ($result->num_rows > 0) {
                         // Output data setiap baris
                         $no = $offset + 1;
@@ -445,14 +429,8 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                                     <td>" . $row["status"] . "</td>
                                      <td>" . (($row["verifikasi"] === null || $row["verifikasi"] === '') ? 'Belum Terverifikasi' : $row["verifikasi"]) . "</td>
                                       <td>" . $row["nama_verifikator"] . "</td>
-                                    <td><a href='edit_bpjs.php?id=" . $row["id_arsip_bpjs"] . "' class='btn-add'>Edit</a>";
-                            // Cek status verifikasi untuk menampilkan tombol 'Verifikasi' atau status 'Terverifikasi'
-                            if ($row['verifikasi'] == 'Terverifikasi') {
-                                echo "<a href='?cancel_verifikasi_id=" . $row["id_arsip_bpjs"] . "' class='btn-add' style='margin-left: 5px;'>Cancel</a>";
-                            } else {
-                                echo "<a href='verifikasi_bpjs.php?id=" . $row["id_arsip_bpjs"] . "&tabel=arsip_bpjs' class='btn-add' style='margin-left: 5px;'>Verifikasi</a>";
-                            }
-
+                                    <td><a href='edit_bpjs.php?id=" . $row["id_arsip_bpjs"] . "' class='btn-add'>Edit</a>
+                                    <a href='upload_foto_bpjs.php?id=" . $row["id_arsip_bpjs"] . "' class='btn-add' style='margin-right: 5px;'>Upload</a>";
                             echo "</td>
                                   </tr>";
                             $no++;

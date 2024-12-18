@@ -390,22 +390,6 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                     $sql .= " LIMIT $limit OFFSET $offset";
                     $result = $conn->query($sql);
 
-                    if (isset($_GET['cancel_verifikasi_id'])) {
-                        $cancel_id = $_GET['cancel_verifikasi_id'];
-                        $sql_cancel_verifikasi = "UPDATE sktm_pend SET verifikasi = '', nama_verifikator = '' WHERE id_sktm_pendidikan = $cancel_id";
-                        if ($conn->query($sql_cancel_verifikasi) === TRUE) {
-                            echo "<script>
-                                    alert('Verifikasi dibatalkan.');
-                                    window.location.href = 'pendidikan.php';
-                                  </script>";
-                        } else {
-                            echo "<script>
-                                    alert('Gagal membatalkan verifikasi.');
-                                    window.location.href = 'pendidikan.php';
-                                  </script>";
-                        }
-                    }
-
                     if ($result->num_rows > 0) {
                         // Output data setiap baris
                         $no = $offset + 1;
@@ -421,8 +405,7 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                                        <td>" . $row["nama_verifikator"] . "</td>
                                     <td>
                     <a href='edit_pendidikan.php?id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-right: 5px;'>Edit</a>
-                    <a href='upload_foto.php?id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-right: 5px;'>Upload</a>
-                    <a href='view_sktm.php?id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-right: 5px;'>Dokumen</a>";
+                    <a href='upload_foto.php?id=" . $row["id_sktm_pendidikan"] . "' class='btn-add' style='margin-right: 5px;'>Upload</a>";
 
                             echo "</td></tr>";
                             $no++;

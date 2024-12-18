@@ -81,19 +81,8 @@
     $alamat = $_POST['alamat'];
     $keterangan = $_POST['keterangan'];
     $tanggal = $_POST['tanggal'];
-    $formulir = NULL;
-
-    if (isset($_FILES['formulir']) && $_FILES['formulir']['error'] == 0) {
-      $targetDir = "login/admin/uploads/umum/";
-      $fileName = uniqid() . "_" . basename($_FILES['formulir']['name']);
-      $targetFilePath = $targetDir . $fileName;
-
-      if (move_uploaded_file($_FILES['formulir']['tmp_name'], $targetFilePath)) {
-        $formulir = $fileName;
-      } else {
-        echo "<div class='alert alert-danger'>Gagal mengunggah formulir!</div>";
-      }
-    }
+    $surat_masuk = $_POST['surat_masuk'];
+    $surat_keluar = $_POST['surat_keluar'];
 
     // Koneksi ke database
     $conn = new mysqli("localhost", "root", "", "kecamatan");
@@ -102,8 +91,8 @@
     }
 
     // Menyimpan data ke database dengan prepared statement
-    $sql = "INSERT INTO arsip_umum (nama_ttl, alamat, ket, tanggal, formulir)
-          VALUES (?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO arsip_umum (nama_ttl, alamat, ket, tanggal, surat_masuk, surat_keluar)
+          VALUES (?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
     if ($stmt === false) {
@@ -111,7 +100,7 @@
     }
 
     // Bind parameter
-    $stmt->bind_param("sssss", $nama_ttl, $alamat, $keterangan, $tanggal, $formulir);
+    $stmt->bind_param("ssssss", $nama_ttl, $alamat, $keterangan, $tanggal, $surat_masuk, $surat_keluar);
 
     // Eksekusi statement dan cek hasilnya
     if ($stmt->execute()) {
@@ -139,6 +128,24 @@
               class="text-danger">*</span></label>
           <div class="col-sm-9">
             <input type="date" class="form-control" id="tanggal" name="tanggal" required>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="surat_masuk" class="col-sm-3 col-form-label">Nomor Surat Masuk <span
+              class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="surat_masuk" name="surat_masuk"
+              placeholder="Masukkan Nomor Surat Masuk" required>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="surat_keluar" class="col-sm-3 col-form-label">Nomor Surat Keluar <span
+              class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="surat_keluar" name="surat_keluar"
+              placeholder="Masukkan Nomor Surat Keluar" required>
           </div>
         </div>
 

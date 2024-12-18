@@ -55,7 +55,7 @@ $kk_target = $target_dir_kk . $kk_new_name;
 $ktp_target = $target_dir_ktp . $ktp_new_name;
 
 // Memeriksa tipe file yang diupload
-$allowed_types = array('jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx');
+$allowed_types = array('jpg', 'jpeg', 'png', 'pdf');
 
 $sktm_file_type = pathinfo($sktm_target, PATHINFO_EXTENSION);
 $kk_file_type = pathinfo($kk_target, PATHINFO_EXTENSION);
