@@ -8,8 +8,6 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// Mengambil nilai pencarian jika ada
-$search = isset($_GET['search']) ? $_GET['search'] : '';
 ?>
 <!DOCTYPE html>
 <html>
@@ -89,35 +87,6 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
             display: none;
         }
 
-        @media only screen and (max-width: 768px) {
-            .menu {
-                display: none;
-                flex-direction: column;
-                align-items: center;
-                width: 100%;
-                background: rgba(0, 0, 0, 0.8);
-                position: absolute;
-                top: 60px;
-                left: 0;
-                z-index: 1;
-            }
-
-            .menu.open {
-                display: flex;
-            }
-
-            .menu a {
-                padding: 10px 0;
-                width: 100%;
-                text-align: center;
-            }
-
-            .menu-toggle {
-                display: block;
-                cursor: pointer;
-            }
-        }
-
         .logout {
             display: flex;
             align-items: center;
@@ -136,7 +105,16 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
 
         .container {
             max-width: 1200px;
-            margin: 100px auto 50px;
+            margin: 50px auto 50px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .container2 {
+            max-width: 1200px;
+            margin: 50px auto;
             padding: 20px;
             background: white;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -225,6 +203,10 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
 
         .pagination a:hover {
             background-color: #ddd;
+        }
+
+        .search {
+            font-size: 16px;
         }
 
         @media (min-width: 768px) {
@@ -340,138 +322,117 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
             <li><a class="logout" href="logout.php"><i class="fas fa-sign-out-alt"></i></a></li>
         </ul>
     </nav>
-
+    <br>
+    <br>
+    <br>
     <div class="container">
-        <h2>Tabel Data Arsip SKCK</h2>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <div>
-                <a href="data_skck.php" class="btn-add">Tambah Data</a>
-                <a href="print_skck_pdf.php?search=<?php echo $search; ?>" class="btn-add">Cetak PDF</a>
-            </div>
-            <div>
-                <input type="text" id="searchInput" placeholder="Cari..." style="padding: 10px; font-size: 16px;">
-                <button onclick="searchData()"
-                    style="padding: 10px; background: #28a745; color: white; border: none; cursor: pointer;"><i
-                        class="fas fa-search"></i></button>
-            </div>
-        </div>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>NO</th>
-                        <th>Nama/TTL</th>
-                        <th>Pendidikan</th>
-                        <th>Agama</th>
-                        <th>Alamat</th>
-                        <th>Keterangan</th>
-                        <th>Tanggal</th>
-                        <th>Verifikasi</th>
-                        <th>Verifikator</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <?php
+        // Menghubungkan ke database
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
+        $dbname = "kecamatan";
+
+        // Membuat koneksi
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        // Memeriksa koneksi
+        if ($conn->connect_error) {
+            die("Koneksi gagal: " . $conn->connect_error);
+        }
+
+        // Mendapatkan ID dari URL
+        $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+        if ($id) {
+            // Mengambil data dari database
+            $sql = "
+            SELECT * FROM arsip_skck WHERE id_arsip_skck = $id;
+        ";
+
+            $result = $conn->query($sql);
+
+            if ($result->num_rows == 1) {
+                $row = $result->fetch_assoc();
+            }
+        } else {
+            die("ID tidak valid.");
+        } ?>
+        <h2>Data Upload Dokumen <?= $row['nama_ttl'] ?></h2>
+        <form action="upload_foto_skck_process.php?id=<?php echo htmlspecialchars($_GET['id']); ?>" method="post"
+            enctype="multipart/form-data">
+            <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
+
+            <div class=" form-group">
+                <label for="ktp">Upload KTP :</label>
+                <input type="file" name="ktp" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
+                <div>
                     <?php
-
-                    $id_admin = $_SESSION['id_admin'];
-                    // Menghubungkan ke database
-                    $servername = "localhost";
-                    $username = "root";
-                    $password = "";
-                    $dbname = "kecamatan";
-
-                    // Membuat koneksi
-                    $conn = new mysqli($servername, $username, $password, $dbname);
-
-                    // Memeriksa koneksi
-                    if ($conn->connect_error) {
-                        die("Koneksi gagal: " . $conn->connect_error);
-                    }
-
-                    // Mendapatkan halaman saat ini dan batas data per halaman
-                    $limit = 10; // Batas data per halaman
-                    $page = isset($_GET['page']) ? $_GET['page'] : 1;
-                    $offset = ($page - 1) * $limit;
-
-                    // Mengambil nilai pencarian jika ada
-                    $search = isset($_GET['search']) ? $_GET['search'] : '';
-
-                    // Mengambil total jumlah data
-                    $sql_count = "SELECT COUNT(*) AS total 
-                    FROM arsip_skck";
-                    if ($search) {
-                        $sql_count .= " WHERE nama_ttl LIKE '%$search%' OR pendidikan LIKE '%$search%' OR agama LIKE '%$search%' OR alamat LIKE '%$search%' OR keterangan LIKE '%$search%' OR tanggal LIKE '%$search%'";
-                    }
-                    $result_count = $conn->query($sql_count);
-                    $total_data = $result_count->fetch_assoc()['total'];
-                    $total_pages = ceil($total_data / $limit);
-
-                    // Mengambil data dari database
-                    $sql = "SELECT * FROM arsip_skck";
-                    if ($search) {
-                        $sql .= " WHERE nama_ttl LIKE '%$search%' OR pendidikan LIKE '%$search%' OR agama LIKE '%$search%' OR alamat LIKE '%$search%' OR keterangan LIKE '%$search%' OR tanggal LIKE '%$search%'";
-                    }
-                    $sql .= " LIMIT $limit OFFSET $offset";
-                    $result = $conn->query($sql);
-
-                    if ($result->num_rows > 0) {
-                        // Output data setiap baris
-                        $no = $offset + 1;
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<tr>
-                                    <td>" . $no . "</td>
-                                    <td>" . $row["nama_ttl"] . "</td>
-                                    <td>" . $row["pendidikan"] . "</td>
-                                    <td>" . $row["agama"] . "</td>
-                                    <td>" . $row["alamat"] . "</td>
-                                    <td>" . $row["keterangan"] . "</td>
-                                    <td>" . $row["tanggal"] . "</td>
-                                     <td>" . (($row["verifikasi"] === null || $row["verifikasi"] === '') ? 'Belum Terverifikasi' : $row["verifikasi"]) . "</td>
-                                      <td>" . $row["nama_verifikator"] . "</td>
-                                    <td><a href='edit_skck.php?id=" . $row["id_arsip_skck"] . "' class='btn-add'>Edit</a>
-                                    <a href='upload_foto_skck.php?id=" . $row["id_arsip_skck"] . "' class='btn-add' style='margin-right: 5px;'>Upload</a>";
-                            echo "</td>
-                                  </tr>";
-                            $no++;
-                        }
+                    if (empty($row['ktp_path'])) {
+                        echo "<span class='text-danger'>Tidak ada dokumen</span>";
                     } else {
-                        echo "<tr><td colspan='6'>Tidak ada data</td></tr>";
+                        $ktp_path = "uploads/ktp/" . $row['ktp_path'];
+                        if (file_exists($ktp_path)) {
+                            echo "<a href='" . $ktp_path . "' target='_blank'>Lihat Dokumen</a>";
+                        } else {
+                            echo "<span class='text-danger'>Tidak ada dokumen.</span>";
+                        }
                     }
-
-                    $conn->close();
                     ?>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="pagination">
-            <?php if ($page > 1): ?>
-                <a href="?page=<?php echo $page - 1; ?>&search=<?php echo $search; ?>">Previous</a>
-            <?php endif; ?>
-
-            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                <a href="?page=<?php echo $i; ?>&search=<?php echo $search; ?>"
-                    class="<?php echo $page == $i ? 'active' : ''; ?>"><?php echo $i; ?></a>
-            <?php endfor; ?>
-
-            <?php if ($page < $total_pages): ?>
-                <a href="?page=<?php echo $page + 1; ?>&search=<?php echo $search; ?>">Next</a>
-            <?php endif; ?>
-        </div>
+                </div>
+            </div>
+            <div class=" form-group">
+                <label for="kelurahan">Upload Surat Kelurahan :</label>
+                <input type="file" name="kelurahan" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
+                <div>
+                    <?php
+                    if (empty($row['kelurahan_path'])) {
+                        echo "<span class='text-danger'>Tidak ada dokumen</span>";
+                    } else {
+                        $kelurahan = "uploads/kelurahan/" . $row['kelurahan_path'];
+                        if (file_exists($kelurahan)) {
+                            echo "<a href='" . $kelurahan . "' target='_blank'>Lihat Dokumen</a>";
+                        } else {
+                            echo "<span class='text-danger'>Tidak ada dokumen.</span>";
+                        }
+                    }
+                    ?>
+                </div>
+            </div>
+            <div class=" form-group">
+                <label for="kk">Upload Kartu Keluarga :</label>
+                <input type="file" name="kk" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
+                <div>
+                    <?php
+                    if (empty($row['kk_path'])) {
+                        echo "<span class='text-danger'>Tidak ada dokumen</span>";
+                    } else {
+                        $kk = "uploads/kk/" . $row['kk_path'];
+                        if (file_exists($kk)) {
+                            echo "<a href='" . $kk . "' target='_blank'>Lihat Dokumen</a>";
+                        } else {
+                            echo "<span class='text-danger'>Tidak ada dokumen.</span>";
+                        }
+                    }
+                    ?>
+                </div>
+            </div>
+            <button type=" submit" class="btn btn-primary">Upload</button>
+            <a href="skck.php" class="btn-back">Kembali</a>
+        </form>
     </div>
+    <div class="container2">
+        <h2>verifikasi</h2>
+        <form method="POST" action="verifikasi_skck.php?id=<?php echo htmlspecialchars($_GET['id']); ?>">
+            <input type="hidden" name="id" value="<?= htmlspecialchars($id); ?>">
+            <div class="form-group">
+                <label for="nama_verifikasi">Nama Verifikator:</label>
+                <input type="text" class="form-control" name="nama_verifikasi" id="nama_verifikasi" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Verifikasi</button>
+        </form>
 
-    <script>
-        function toggleMenu() {
-            const menu = document.querySelector('.menu');
-            menu.classList.toggle('open');
-        }
-
-        function searchData() {
-            const searchInput = document.getElementById('searchInput').value;
-            window.location.href = '?search=' + searchInput;
-        }
-    </script>
+    </div>
 </body>
 
 </html>
