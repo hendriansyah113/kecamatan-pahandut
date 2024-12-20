@@ -32,6 +32,7 @@ if ($result_verifikator->num_rows > 0) {
         $verifikators[] = $row;
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -40,6 +41,7 @@ if ($result_verifikator->num_rows > 0) {
     <title>Kecamatan Pahandut</title>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <style type="text/css">
         body {
             background-color: #eef2f7;
@@ -233,11 +235,69 @@ if ($result_verifikator->num_rows > 0) {
             font-size: 16px;
         }
 
+        /* Tombol close */
+        .close {
+            color: #fff;
+            /* Ganti warna agar lebih terlihat */
+            float: right;
+            font-size: 36px;
+            /* Ukuran lebih besar */
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #ff4d4d;
+            /* Tambahkan latar belakang */
+            border: none;
+            /* Hilangkan border */
+            border-radius: 50%;
+            /* Jadikan tombol bulat */
+            padding: 10px;
+            /* Tambahkan ruang di dalam tombol */
+            margin-top: -10px;
+            /* Sesuaikan posisi */
+            margin-right: -10px;
+            /* Sesuaikan posisi */
+        }
+
+        .close:hover,
+        .close:focus {
+            background-color: #e60000;
+            /* Warna saat hover */
+            color: #fff;
+            /* Tetap putih saat hover */
+        }
+
+
         @media (min-width: 768px) {
             .container {
                 width: auto !important;
                 /* Mengganti width menjadi auto */
             }
+        }
+
+        /* Gaya untuk modal */
+        .modal {
+            display: none;
+            /* Modal disembunyikan secara default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        /* Konten modal */
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
         }
 
         @media only screen and (max-width: 1000px) {
@@ -371,45 +431,58 @@ WHERE sktm_pend.id_sktm_pendidikan = $id;
             }
         } else {
             die("ID tidak valid.");
-        } ?>
+        }
+        ?>
         <h2>Data Upload Dokumen <?= $row['nama_ttl'] ?></h2>
         <form action="upload_foto_process.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
 
+            <div class="form-group">
+                <label for="kk">Upload KK :</label>
+                <input type="file" name="kk" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
+                <div>
+                    <?php
+                    if (file_exists($row['kk_path'])) {
+                        $kk_extension = pathinfo($row['kk_path'], PATHINFO_EXTENSION);
+                        $is_kk_pdf = strtolower($kk_extension) === 'pdf';
+                        $kk_path = $row['kk_path'];
+                        echo "<button type='button' class='btn btn-primary' id='openModalButtonKK'>Lihat Dokumen</button>";
+                    } else {
+                        $kk_path = null;
+                        echo "<span class='text-danger'>Tidak ada dokumen</span>";
+                    }
+                    ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ktp">Upload KTP :</label>
+                <input type="file" name="ktp" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
+                <div>
+                    <?php
+                    if (file_exists($row['ktp_path'])) {
+                        $ktp_extension = pathinfo($row['ktp_path'], PATHINFO_EXTENSION);
+                        $is_ktp_pdf = strtolower($ktp_extension) === 'pdf';
+                        $ktp_path = $row['ktp_path'];
+                        echo "<button type='button' class='btn btn-primary' id='openModalButtonKTP'>Lihat Dokumen</button>";
+                    } else {
+                        $ktp_path = null;
+                        echo "<span class='text-danger'>Tidak ada dokumen</span>";
+                    }
+                    ?>
+                </div>
+            </div>
             <div class="form-group">
                 <label for="sktm">Upload SKTM :</label>
                 <input type="file" name="sktm" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
                 <div>
                     <?php
                     if (file_exists($row['sktm_path'])) {
-                        echo "<a href='" . $row['sktm_path'] . "' target='_blank'>Lihat Dokumen</a>";
+                        $sktm_extension = pathinfo($row['sktm_path'], PATHINFO_EXTENSION);
+                        $is_sktm_pdf = strtolower($sktm_extension) === 'pdf';
+                        $sktm_path = $row['sktm_path'];
+                        echo "<button type='button' class='btn btn-primary' id='openModalButtonSKTM'>Lihat Dokumen</button>";
                     } else {
-                        echo "<span class='text-danger'>Tidak ada dokumen</span>";
-                    }
-                    ?>
-                </div>
-            </div>
-            <div class=" form-group">
-                <label for="kk">Upload KK :</label>
-                <input type="file" name="kk" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
-                <div>
-                    <?php
-                    if (file_exists($row['kk_path'])) {
-                        echo "<a href='" . $row['kk_path'] . "' target='_blank'>Lihat Dokumen</a>";
-                    } else {
-                        echo "<span class='text-danger'>Tidak ada dokumen</span>";
-                    }
-                    ?>
-                </div>
-            </div>
-            <div class=" form-group">
-                <label for="ktp">Upload KTP :</label>
-                <input type="file" name="ktp" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
-                <div>
-                    <?php
-                    if (file_exists($row['ktp_path'])) {
-                        echo "<a href='" . $row['ktp_path'] . "' target='_blank'>Lihat Dokumen</a>";
-                    } else {
+                        $sktm_path = null;
                         echo "<span class='text-danger'>Tidak ada dokumen</span>";
                     }
                     ?>
@@ -419,6 +492,30 @@ WHERE sktm_pend.id_sktm_pendidikan = $id;
             <a href="pendidikan.php" class="btn-back">Kembali</a>
         </form>
     </div>
+    <!-- Modal KK -->
+    <div id="viewDocumentModalKK" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModalKK">&times;</span>
+            <div id="modalContentKK"></div>
+        </div>
+    </div>
+
+    <!-- Modal KTP -->
+    <div id="viewDocumentModalKTP" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModalKTP">&times;</span>
+            <div id="modalContentKTP"></div>
+        </div>
+    </div>
+
+    <!-- Modal SKTM -->
+    <div id="viewDocumentModalSKTM" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModalSKTM">&times;</span>
+            <div id="modalContentSKTM"></div>
+        </div>
+    </div>
+
     <div class="container2">
         <h2>Verifikasi</h2>
         <form method="POST" action="verifikasi_sktm.php?id=<?php echo htmlspecialchars($_GET['id']); ?>">
@@ -437,6 +534,87 @@ WHERE sktm_pend.id_sktm_pendidikan = $id;
             <button type="submit" class="btn btn-primary">Verifikasi</button>
         </form>
     </div>
+    <script>
+        // Modal KK
+        var modalKK = document.getElementById("viewDocumentModalKK");
+        var btnKK = document.getElementById("openModalButtonKK");
+        var spanKK = document.getElementById("closeModalKK");
+        var modalContentKK = document.getElementById("modalContentKK");
+
+        btnKK.onclick = function() {
+            var filePath = "<?php echo addslashes($kk_path); ?>";
+            if (filePath.endsWith('.pdf')) {
+                modalContentKK.innerHTML = '<iframe src="' + filePath + '" style="width:100%; height:500px;"></iframe>';
+            } else {
+                modalContentKK.innerHTML = '<img src="' + filePath + '" style="width:100%; height:500px;">';
+            }
+            modalKK.style.display = "block";
+        }
+
+        spanKK.onclick = function() {
+            modalKK.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modalKK) {
+                modalKK.style.display = "none";
+            }
+        }
+
+        // Modal KTP
+        var modalKTP = document.getElementById("viewDocumentModalKTP");
+        var btnKTP = document.getElementById("openModalButtonKTP");
+        var spanKTP = document.getElementById("closeModalKTP");
+        var modalContentKTP = document.getElementById("modalContentKTP");
+
+        btnKTP.onclick = function() {
+            var filePath = "<?php echo addslashes($ktp_path); ?>";
+            if (filePath.endsWith('.pdf')) {
+                modalContentKTP.innerHTML = '<iframe src="' + filePath +
+                    '" style="width:100%; height:500px;"></iframe>';
+            } else {
+                modalContentKTP.innerHTML = '<img src="' + filePath + '" style="width:100%; height:500px;">';
+            }
+            modalKTP.style.display = "block";
+        }
+
+        spanKTP.onclick = function() {
+            modalKTP.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modalKTP) {
+                modalKTP.style.display = "none";
+            }
+        }
+
+        // Modal SKTM
+        var modalSKTM = document.getElementById("viewDocumentModalSKTM");
+        var btnSKTM = document.getElementById("openModalButtonSKTM");
+        var spanSKTM = document.getElementById("closeModalSKTM");
+        var modalContentSKTM = document.getElementById("modalContentSKTM");
+
+        btnSKTM.onclick = function() {
+            var filePath = "<?php echo addslashes($sktm_path); ?>";
+            if (filePath.endsWith('.pdf')) {
+                modalContentSKTM.innerHTML = '<iframe src="' + filePath +
+                    '" style="width:100%; height:500px;"></iframe>';
+            } else {
+                modalContentSKTM.innerHTML = '<img src="' + filePath + '" style="width:100%; height:500px;">';
+            }
+            modalSKTM.style.display = "block";
+        }
+
+        spanSKTM.onclick = function() {
+            modalSKTM.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modalSKTM) {
+                modalSKTM.style.display = "none";
+            }
+        }
+    </script>
 </body>
 
 </html>

@@ -23,6 +23,16 @@ if ($id <= 0) {
     exit;
 }
 
+// Mengambil data dari database
+$sql = "SELECT * FROM sktm_berobat WHERE id_sktm_berobat = $id";
+$result = $conn->query($sql);
+
+if ($result->num_rows == 1) {
+    $row = $result->fetch_assoc();
+} else {
+    die("ID tidak valid.");
+}
+
 // Direktori target untuk upload
 $target_dir_kk = "uploads/kk/";
 $target_dir_foto = "uploads/foto/";
@@ -35,38 +45,34 @@ if (!is_dir($target_dir_foto)) {
     mkdir($target_dir_foto, 0755, true);
 }
 
-// Validasi dan upload file KK (wajib)
-if (empty($_FILES['kk']['tmp_name'])) {
-    echo "<script>alert('File KK wajib diunggah.'); window.history.back();</script>";
-    exit;
-}
-
-$kk_name = $_FILES['kk']['name'];
-$kk_file_type = strtolower(pathinfo($kk_name, PATHINFO_EXTENSION));
+// Validasi tipe file
 $allowed_types = ['jpg', 'jpeg', 'png', 'pdf'];
 
-// Periksa tipe file KK
-if (!in_array($kk_file_type, $allowed_types)) {
-    echo "<script>alert('Tipe file KK tidak valid. Harap upload file dengan format JPG, JPEG, PNG, atau PDF.'); window.history.back();</script>";
-    exit;
-}
-
 // Proses upload file KK
-$kk_new_name = "kk_" . time() . "_" . basename($kk_name);
-$kk_target = $target_dir_kk . $kk_new_name;
+if (!empty($_FILES['kk']['name'])) {
+    $kk_name = $_FILES['kk']['name'];
+    $kk_file_type = strtolower(pathinfo($kk_name, PATHINFO_EXTENSION));
 
-if (!move_uploaded_file($_FILES['kk']['tmp_name'], $kk_target)) {
-    echo "<script>alert('Gagal mengunggah file KK.'); window.history.back();</script>";
-    exit;
+    if (!in_array($kk_file_type, $allowed_types)) {
+        echo "<script>alert('Tipe file KK tidak valid. Harap upload file dengan format JPG, JPEG, PNG, atau PDF.'); window.history.back();</script>";
+        exit;
+    }
+
+    $kk_new_name = "kk_" . time() . "_" . basename($kk_name);
+    $kk_target = $target_dir_kk . $kk_new_name;
+
+    if (move_uploaded_file($_FILES['kk']['tmp_name'], $kk_target)) {
+        $kk_path = $kk_new_name;
+    } else {
+        echo "<script>alert('Gagal mengupload file KK.'); window.history.back();</script>";
+        exit;
+    }
+} else {
+    $kk_path = $row['kk_path'];
 }
 
-// Simpan hanya nama file KK
-$kk_final_name = $kk_new_name;
-
-// Validasi dan upload file Foto (opsional)
-$foto_final_name = null;
-
-if (!empty($_FILES['foto']['tmp_name'])) {
+// Proses upload file Foto
+if (!empty($_FILES['foto']['name'])) {
     $foto_name = $_FILES['foto']['name'];
     $foto_file_type = strtolower(pathinfo($foto_name, PATHINFO_EXTENSION));
 
@@ -79,8 +85,13 @@ if (!empty($_FILES['foto']['tmp_name'])) {
     $foto_target = $target_dir_foto . $foto_new_name;
 
     if (move_uploaded_file($_FILES['foto']['tmp_name'], $foto_target)) {
-        $foto_final_name = $foto_new_name; // Simpan hanya nama file Foto
+        $foto_path = $foto_new_name;
+    } else {
+        echo "<script>alert('Gagal mengupload file Foto.'); window.history.back();</script>";
+        exit;
     }
+} else {
+    $foto_path = $row['foto_path'];
 }
 
 // Query untuk memperbarui database
@@ -92,7 +103,7 @@ if (!$stmt) {
 }
 
 // Bind parameter
-$stmt->bind_param("ssi", $kk_final_name, $foto_final_name, $id);
+$stmt->bind_param("ssi", $kk_path, $foto_path, $id);
 
 if ($stmt->execute()) {
     echo "<script>alert('File berhasil diupload atau diperbarui.'); window.location.href='upload_foto_sktm_berobat.php?id=$id';</script>";

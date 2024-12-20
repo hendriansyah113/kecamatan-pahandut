@@ -103,7 +103,7 @@ $stmt->bind_param(
 );
 
 if ($stmt->execute()) {
-    echo "<script>alert('File berhasil diupload atau diperbarui.'); window.location.href='pendidikan.php';</script>";
+    echo "<script>alert('File berhasil diupload atau diperbarui.'); window.location.href='upload_foto.php?id=$id';</script>";
 } else {
     echo "Error: " . $stmt->error;
 }

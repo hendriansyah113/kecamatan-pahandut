@@ -1,7 +1,14 @@
 <?php
 session_start();
 
-// Konfigurasi database
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['username'])) {
+    // Jika belum login, arahkan ke halaman login
+    header("Location: ../index.php?pesan=belum_login");
+    exit();
+}
+
+// Menghubungkan ke database
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -18,64 +25,71 @@ if ($conn->connect_error) {
 // Mendapatkan ID dari URL
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-if ($id <= 0) {
-    echo "ID tidak valid.";
-    exit;
+if ($id) {
+    // Mengambil data dari database
+    $sql = "SELECT * FROM arsip_bpjs WHERE id_arsip_bpjs = $id";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows == 1) {
+        $row = $result->fetch_assoc();
+    } else {
+        die("ID tidak valid.");
+    }
+} else {
+    die("ID tidak valid.");
 }
 
-// Direktori target untuk upload
+// Direktori target untuk upload file
 $target_dir_ktp = "uploads/ktp/";
 $target_dir_foto = "uploads/foto/";
 
-// Membuat direktori jika belum ada
-if (!is_dir($target_dir_ktp)) {
-    mkdir($target_dir_ktp, 0755, true);
-}
-if (!is_dir($target_dir_foto)) {
-    mkdir($target_dir_foto, 0755, true);
-}
-
-// Validasi dan upload file ktp (wajib)
-if (empty($_FILES['ktp']['tmp_name'])) {
-    echo "<script>alert('File ktp wajib diunggah.'); window.history.back();</script>";
-    exit;
-}
-
-$ktp_name = $_FILES['ktp']['name'];
-$ktp_file_type = strtolower(pathinfo($ktp_name, PATHINFO_EXTENSION));
+// Validasi tipe file
 $allowed_types = ['jpg', 'jpeg', 'png', 'pdf'];
 
-// Periksa tipe file ktp
-if (!in_array($ktp_file_type, $allowed_types)) {
-    echo "<script>alert('Tipe file ktp tidak valid. Harap upload file dengan format JPG, JPEG, PNG, atau PDF.'); window.history.back();</script>";
-    exit;
-}
+// Proses upload file KTP
+if (!empty($_FILES['ktp']['name'])) {
+    $ktp_name = $_FILES['ktp']['name'];
+    $ktp_file_type = strtolower(pathinfo($ktp_name, PATHINFO_EXTENSION));
 
-// Proses upload file ktp
-$ktp_new_name = "ktp_" . time() . "_" . basename($ktp_name);
-$ktp_target = $target_dir_ktp . $ktp_new_name;
+    if (!in_array($ktp_file_type, $allowed_types)) {
+        echo "<script>alert('Tipe file KTP tidak valid. Harap upload file dengan format JPG, JPEG, PNG, atau PDF.'); window.history.back();</script>";
+        exit;
+    }
 
-if (!move_uploaded_file($_FILES['ktp']['tmp_name'], $ktp_target)) {
-    echo "<script>alert('Gagal mengunggah file KTP.'); window.history.back();</script>";
-    exit;
-}
+    $ktp_new_name = "ktp_" . time() . "_" . basename($ktp_name);
+    $ktp_target = $target_dir_ktp . $ktp_new_name;
 
-// Simpan hanya nama file KK
-$ktp_final_name = $ktp_new_name;
-
-$foto_name = $_FILES['foto']['name'];
-if (!empty($foto_name)) {
-    $foto_new_name = "foto_" . time() . "_" . preg_replace('/[^a-zA-Z0-9._-]/', '_', $foto_name);
-    $foto_target = $target_dir_foto . $foto_new_name;
-
-    if (move_uploaded_file($_FILES['foto']['tmp_name'], $foto_target)) {
-        $foto_final_name = $foto_new_name;
+    if (move_uploaded_file($_FILES['ktp']['tmp_name'], $ktp_target)) {
+        $ktp_path = $ktp_new_name;
     } else {
-        echo "<script>alert('Gagal mengunggah file Foto.'); window.history.back();</script>";
+        echo "<script>alert('Gagal mengupload file KTP.'); window.history.back();</script>";
         exit;
     }
 } else {
-    $foto_final_name = null;
+    $ktp_path = $row['ktp_path'];
+}
+
+// Proses upload file Foto
+if (!empty($_FILES['foto']['name'])) {
+    $foto_name = $_FILES['foto']['name'];
+    $foto_file_type = strtolower(pathinfo($foto_name, PATHINFO_EXTENSION));
+
+    if (!in_array($foto_file_type, $allowed_types)) {
+        echo "<script>alert('Tipe file Foto tidak valid. Harap upload file dengan format JPG, JPEG, PNG, atau PDF.'); window.history.back();</script>";
+        exit;
+    }
+
+    $foto_new_name = "foto_" . time() . "_" . basename($foto_name);
+    $foto_target = $target_dir_foto . $foto_new_name;
+
+    if (move_uploaded_file($_FILES['foto']['tmp_name'], $foto_target)) {
+        $foto_path = $foto_new_name;
+    } else {
+        echo "<script>alert('Gagal mengupload file Foto.'); window.history.back();</script>";
+        exit;
+    }
+} else {
+    $foto_path = $row['foto_path'];
 }
 
 // Query untuk memperbarui database
@@ -87,7 +101,7 @@ if (!$stmt) {
 }
 
 // Bind parameter
-$stmt->bind_param("ssi", $ktp_final_name, $foto_final_name, $id);
+$stmt->bind_param("ssi", $ktp_path, $foto_path, $id);
 
 if ($stmt->execute()) {
     echo "<script>alert('File berhasil diupload atau diperbarui.'); window.location.href='upload_foto_bpjs.php?id=$id';</script>";

@@ -234,6 +234,63 @@ if ($result_verifikator->num_rows > 0) {
             font-size: 16px;
         }
 
+        /* Gaya untuk modal */
+        .modal {
+            display: none;
+            /* Modal disembunyikan secara default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        /* Konten modal */
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        /* Tombol close */
+        .close {
+            color: #fff;
+            /* Ganti warna agar lebih terlihat */
+            float: right;
+            font-size: 36px;
+            /* Ukuran lebih besar */
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #ff4d4d;
+            /* Tambahkan latar belakang */
+            border: none;
+            /* Hilangkan border */
+            border-radius: 50%;
+            /* Jadikan tombol bulat */
+            padding: 10px;
+            /* Tambahkan ruang di dalam tombol */
+            margin-top: -10px;
+            /* Sesuaikan posisi */
+            margin-right: -10px;
+            /* Sesuaikan posisi */
+        }
+
+        .close:hover,
+        .close:focus {
+            background-color: #e60000;
+            /* Warna saat hover */
+            color: #fff;
+            /* Tetap putih saat hover */
+        }
+
         @media (min-width: 768px) {
             .container {
                 width: auto !important;
@@ -373,48 +430,62 @@ if ($result_verifikator->num_rows > 0) {
         <h2>Data Upload Dokumen <?= $row['nama_ttl'] ?></h2>
         <form action="upload_foto_sktm_berobat_process.php?id=<?php echo htmlspecialchars($_GET['id']); ?>"
             method="post" enctype="multipart/form-data">
-            <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
+            <input type="hidden" name="id" value="<?php echo htmlspecialchars($_GET['id']); ?>">
 
-            <div class=" form-group">
+            <div class="form-group">
                 <label for="kk">Upload KK :</label>
                 <input type="file" name="kk" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
                 <div>
                     <?php
-                    if (empty($row['kk_path'])) {
-                        echo "<span class='text-danger'>Tidak ada dokumen</span>";
+                    $kk_path = "uploads/kk/" . $row['kk_path'];
+                    if (file_exists($kk_path)) {
+                        echo "<button type='button' class='btn btn-primary' id='openModalButtonKK'>Lihat Dokumen</button>";
                     } else {
-                        $kk_path = "uploads/kk/" . $row['kk_path'];
-                        if (file_exists($kk_path)) {
-                            echo "<a href='" . $kk_path . "' target='_blank'>Lihat Dokumen</a>";
-                        } else {
-                            echo "<span class='text-danger'>Tidak ada dokumen.</span>";
-                        }
+                        echo "<span class='text-danger'>Tidak ada dokumen.</span>";
                     }
                     ?>
                 </div>
             </div>
-            <div class=" form-group">
+            <div class="form-group">
                 <label for="foto">Upload Foto Sakit (Opsional) :</label>
                 <input type="file" name="foto" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
                 <div>
                     <?php
                     if (empty($row['foto_path'])) {
                         echo "<span class='text-danger'>Tidak ada dokumen</span>";
+                        $foto_path = null;
                     } else {
                         $foto_path = "uploads/foto/" . $row['foto_path'];
                         if (file_exists($foto_path)) {
-                            echo "<a href='" . $foto_path . "' target='_blank'>Lihat Dokumen</a>";
+                            echo "<button type='button' class='btn btn-primary' id='openModalButtonFoto'>Lihat Dokumen</button>";
                         } else {
                             echo "<span class='text-danger'>Tidak ada dokumen.</span>";
+                            $foto_path = null;
                         }
                     }
                     ?>
                 </div>
             </div>
-            <button type=" submit" class="btn btn-primary">Upload</button>
+            <button type="submit" class="btn btn-primary">Upload</button>
             <a href="berobat.php" class="btn-back">Kembali</a>
         </form>
     </div>
+    <!-- Modal KK -->
+    <div id="viewDocumentModalKK" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModalKK">&times;</span>
+            <div id="modalContentKK"></div>
+        </div>
+    </div>
+
+    <!-- Modal Foto -->
+    <div id="viewDocumentModalFoto" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModalFoto">&times;</span>
+            <div id="modalContentFoto"></div>
+        </div>
+    </div>
+
     <div class="container2">
         <h2>Verifikasi</h2>
         <form method="POST" action="verifikasi_berobat.php?id=<?php echo htmlspecialchars($_GET['id']); ?>">
@@ -433,6 +504,61 @@ if ($result_verifikator->num_rows > 0) {
             <button type="submit" class="btn btn-primary">Verifikasi</button>
         </form>
     </div>
+    <script>
+        // Modal KK
+        var modalKK = document.getElementById("viewDocumentModalKK");
+        var btnKK = document.getElementById("openModalButtonKK");
+        var spanKK = document.getElementById("closeModalKK");
+        var modalContentKK = document.getElementById("modalContentKK");
+
+        btnKK.onclick = function() {
+            var filePath = "<?php echo addslashes($kk_path); ?>";
+            if (filePath.endsWith('.pdf')) {
+                modalContentKK.innerHTML = '<iframe src="' + filePath +
+                    '" style="width:100%; height:500px;" frameborder="0"></iframe>';
+            } else {
+                modalContentKK.innerHTML = '<img src="' + filePath + '" style="width:100%; height:500px;">';
+            }
+            modalKK.style.display = "block";
+        }
+
+        spanKK.onclick = function() {
+            modalKK.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modalKK) {
+                modalKK.style.display = "none";
+            }
+        }
+
+        // Modal Foto
+        var modalFoto = document.getElementById("viewDocumentModalFoto");
+        var btnFoto = document.getElementById("openModalButtonFoto");
+        var spanFoto = document.getElementById("closeModalFoto");
+        var modalContentFoto = document.getElementById("modalContentFoto");
+
+        btnFoto.onclick = function() {
+            var filePath = "<?php echo addslashes($foto_path); ?>";
+            if (filePath.endsWith('.pdf')) {
+                modalContentFoto.innerHTML = '<iframe src="' + filePath +
+                    '" style="width:100%; height:500px;" frameborder="0"></iframe>';
+            } else {
+                modalContentFoto.innerHTML = '<img src="' + filePath + '" style="width:100%; height:500px;">';
+            }
+            modalFoto.style.display = "block";
+        }
+
+        spanFoto.onclick = function() {
+            modalFoto.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modalFoto) {
+                modalFoto.style.display = "none";
+            }
+        }
+    </script>
 </body>
 
 </html>
