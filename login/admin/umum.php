@@ -362,6 +362,8 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                         <th>NO</th>
                         <th>Tanggal</th>
                         <th>Nama/TTL</th>
+                        <th>Nomor Surat Masuk</th>
+                        <th>Nomor Surat Keluar</th>
                         <th>Alamat</th>
                         <th>Keterangan</th>
                         <th>Verifikasi</th>
@@ -437,6 +439,8 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                                     <td>" . $no . "</td>
                                     <td>" . $row["tanggal"] . "</td>
                                     <td>" . $row["nama_ttl"] . "</td>
+                                     <td>" . $row["surat_masuk"] . "</td>
+                                      <td>" . $row["surat_keluar"] . "</td>
                                     <td>" . $row["alamat"] . "</td>
                                     <td>" . $row["ket"] . "</td>
                                      <td>" . (($row["verifikasi"] === null || $row["verifikasi"] === '') ? 'Belum Terverifikasi' : $row["verifikasi"]) . "</td>

@@ -270,6 +270,14 @@ if (!isset($_SESSION['username'])) {
                 <input type="text" id="nama_ttl" name="nama_ttl" required>
             </div>
             <div class="form-group">
+                <label for="surat_masuk">Nomor surat Masuk</label>
+                <input type="text" id="surat_masuk" name="surat_masuk" required>
+            </div>
+            <div class="form-group">
+                <label for="surat_keluar">Nomor surat Keluar</label>
+                <input type="text" id="surat_keluar" name="surat_keluar" required>
+            </div>
+            <div class="form-group">
                 <label for="alamat">Alamat</label>
                 <textarea id="alamat" name="alamat" rows="4" required></textarea>
             </div>
@@ -303,9 +311,11 @@ if (!isset($_SESSION['username'])) {
             $nama_ttl = $conn->real_escape_string($_POST["nama_ttl"]);
             $alamat = $conn->real_escape_string($_POST["alamat"]);
             $ket = $conn->real_escape_string($_POST["ket"]);
+            $surat_masuk = $conn->real_escape_string($_POST["surat_masuk"]);
+            $surat_keluar = $conn->real_escape_string($_POST["surat_keluar"]);
 
             // Menyimpan data ke database
-            $sql = "INSERT INTO arsip_umum (tanggal, nama_ttl, alamat, ket) VALUES ('$tanggal', '$nama_ttl', '$alamat', '$ket')";
+            $sql = "INSERT INTO arsip_umum (tanggal, nama_ttl, alamat, ket, surat_masuk, surat_keluar) VALUES ('$tanggal', '$nama_ttl', '$alamat', '$ket', '$surat_masuk', '$surat_keluar')";
 
             if ($conn->query($sql) === TRUE) {
                 echo "<script>

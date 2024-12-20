@@ -8,6 +8,30 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
+// Menghubungkan ke database
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "kecamatan";
+
+// Membuat koneksi
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Memeriksa koneksi
+if ($conn->connect_error) {
+    die("Koneksi gagal: " . $conn->connect_error);
+}
+
+// Query untuk mengambil data verifikator dari tabel login
+$sql_verifikator = "SELECT id_admin, nama FROM login"; // Pastikan kolom nama sesuai dengan tabel Anda
+$result_verifikator = $conn->query($sql_verifikator);
+
+$verifikators = [];
+if ($result_verifikator->num_rows > 0) {
+    while ($row = $result_verifikator->fetch_assoc()) {
+        $verifikators[] = $row;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -327,19 +351,6 @@ if (!isset($_SESSION['username'])) {
     <br>
     <div class="container">
         <?php
-        // Menghubungkan ke database
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "kecamatan";
-
-        // Membuat koneksi
-        $conn = new mysqli($servername, $username, $password, $dbname);
-
-        // Memeriksa koneksi
-        if ($conn->connect_error) {
-            die("Koneksi gagal: " . $conn->connect_error);
-        }
 
         // Mendapatkan ID dari URL
         $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
@@ -409,16 +420,22 @@ WHERE sktm_pend.id_sktm_pendidikan = $id;
         </form>
     </div>
     <div class="container2">
-        <h2>verifikasi</h2>
+        <h2>Verifikasi</h2>
         <form method="POST" action="verifikasi_sktm.php?id=<?php echo htmlspecialchars($_GET['id']); ?>">
             <input type="hidden" name="id" value="<?= htmlspecialchars($id); ?>">
             <div class="form-group">
                 <label for="nama_verifikasi">Nama Verifikator:</label>
-                <input type="text" class="form-control" name="nama_verifikasi" id="nama_verifikasi" required>
+                <select class="form-control" name="nama_verifikasi" id="nama_verifikasi" required>
+                    <option value="">-- Pilih Verifikator --</option>
+                    <?php foreach ($verifikators as $verifikator): ?>
+                        <option value="<?php echo htmlspecialchars($verifikator['nama']); ?>">
+                            <?php echo htmlspecialchars($verifikator['nama']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
             <button type="submit" class="btn btn-primary">Verifikasi</button>
         </form>
-
     </div>
 </body>
 
