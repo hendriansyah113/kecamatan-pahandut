@@ -283,7 +283,7 @@ if ($result_verifikator->num_rows > 0) {
             left: 0;
             top: 0;
             width: 100%;
-            height: 100%;
+            height: 200%;
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.7);
         }
@@ -294,8 +294,8 @@ if ($result_verifikator->num_rows > 0) {
             margin: 10% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 80%;
-            max-width: 600px;
+            width: 300%;
+            max-width: 1200px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             border-radius: 8px;
         }
